@@ -1,17 +1,15 @@
 import React from 'react';
 import styled from 'styled-components';
-import GameWindow from './game-components/GameWindow';
+import GameWindow from './GameWindow';
 
 const rules = ['rule 1', 'rule 2', 'rule 3'];
 
 const Content: React.FC = () => (
   <Main>
     <GameRules>
-      <RulesList>
-        {rules.map((rule, i) => (
-          <p key={i}>{rule}</p>
-        ))}
-      </RulesList>
+      {rules.map((rule, i) => (
+        <p key={i}>{rule}</p>
+      ))}
     </GameRules>
     <GameWindow />
   </Main>
