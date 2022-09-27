@@ -1,5 +1,8 @@
+import * as PIXI from 'pixi.js';
 import type { Texture } from 'pixi.js';
+import { Sprite } from 'pixi.js';
 import { GameState } from './types';
+import { appConfig } from './config';
 
 export const paddleSetup = (state: GameState, texture: Texture) => {
   // Create the paddle and add to the game state.
@@ -53,7 +56,8 @@ export const bricksSetup = (
   const adjustedHeight = textures.brick2.height * brickScale;
   const numberOfRows = 6;
   const bricksPerRow = Math.floor(appConfig.w / (adjustedWidth + 20));
-  state.brickGrid = [];
+  const bricksContainer = new PIXI.Container();
+  const brickGrid = [];
 
   for (let i = 0; i < numberOfRows; i += 1) {
     const row: Sprite[] = [];
@@ -70,6 +74,8 @@ export const bricksSetup = (
         row.push(newBrick);
       }
     }
-    state.brickGrid.push(row);
+    brickGrid.push(row);
   }
+  bricksContainer.addChild(...brickGrid.flat());
+  state.bricks = bricksContainer;
 };

@@ -1,4 +1,4 @@
-import { Sprite } from '@pixi/sprite';
+import { Container, Sprite } from 'pixi.js';
 
 export interface SpriteWithVelocity extends Sprite {
   vx?: number;
@@ -10,6 +10,8 @@ export interface SpriteWithVelocity extends Sprite {
     bottom: boolean;
   };
 }
+
+export type Bricks = Container;
 
 export interface BallSprite extends SpriteWithVelocity {
   paddleCollision?: string;
@@ -29,8 +31,10 @@ export interface KeyObject {
 }
 
 // Game State Object
-export interface GameState {
-  brickGrid?: Array<Sprite[]>;
+export type GameState = {
+  bricks?: Bricks;
   paddle?: PaddleSprite;
   ball?: BallSprite;
-}
+};
+
+export type GameObject = PaddleSprite | BallSprite | Bricks;

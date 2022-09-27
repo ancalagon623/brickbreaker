@@ -1,3 +1,7 @@
+import * as PIXI from 'pixi.js';
+import { SpriteWithVelocity, BallSprite } from './types';
+import { appConfig } from './config';
+
 // I had to specify the return value here because otherwise the returned type would be composite,
 // and typescript expects it to be a simple type when assigning it as an argument in other functions.
 export const borderCollisionTest = (

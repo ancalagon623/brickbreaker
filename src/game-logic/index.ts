@@ -1,8 +1,12 @@
 import * as PIXI from 'pixi.js';
-import { GameState } from './types';
+import { DisplayObject } from 'pixi.js';
+import * as anim from './animations';
+import { GameObject, GameState } from './types';
+import { paddleSetup, ballSetup, bricksSetup } from './setup';
+import { keyboard } from './event-listeners';
+import { appConfig } from './config';
 
 // start the PIXI app that creates a loader, ticker, and renderer for us.
-export const appConfig = { w: 640, h: 690 };
 
 const app = new PIXI.Application({
   width: appConfig.w,
@@ -27,7 +31,7 @@ export const play = (resources: PIXI.utils.Dict<PIXI.LoaderResource>) => {
   if (
     state.paddle === undefined ||
     state.ball === undefined ||
-    state.brickGrid === undefined
+    state.bricks === undefined
   ) {
     throw new Error(
       'State is incomplete. Check the loader function to make sure the resources were loaded properly'
@@ -38,32 +42,31 @@ export const play = (resources: PIXI.utils.Dict<PIXI.LoaderResource>) => {
   const leftKeySettings = keyboard('ArrowLeft');
   const rightKeySettings = keyboard('ArrowRight');
   leftKeySettings.press = () => {
-    animateX(state.paddle, -5);
+    anim.animateX(state.paddle, -5);
   };
   leftKeySettings.release = () => {
     if (state.paddle?.vx && state.paddle.vx < 0) {
-      endXAnimation(state.paddle);
+      anim.endXAnimation(state.paddle);
     }
   };
   rightKeySettings.press = () => {
-    animateX(state.paddle, 5);
+    anim.animateX(state.paddle, 5);
   };
   rightKeySettings.release = () => {
     if (state.paddle?.vx && state.paddle.vx > 0) {
-      endXAnimation(state.paddle);
+      anim.endXAnimation(state.paddle);
     }
   };
 
   // add and render the sprites to the stage
-  app.stage.addChild(state.paddle, state.ball);
-  app.stage.addChild(...state.brickGrid.flat());
+  app.stage.addChild(...Object.values<GameObject>(state));
 
   // start the game loop
   app.ticker.add((delta: number) => {
     // check the paddle's position and update the velocity as necessary.
-    updatePaddleVelocity(state.paddle);
+    anim.updatePaddleVelocity(state.paddle);
     // check the ball's position and change it if it hits a side or the paddle
-    updateBallVelocity(state.paddle, state.ball);
+    anim.updateBallVelocity(state.paddle, state.ball);
 
     // animate the ball
     if (state.ball?.vx) {

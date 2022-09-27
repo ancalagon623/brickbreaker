@@ -1,3 +1,5 @@
+import { KeyObject } from './types';
+
 // Function that adds a listener for a key and creates a settings object for that key to which you can add press and release event callbacks.
 export function keyboard(value: string) {
   const key: KeyObject = {
