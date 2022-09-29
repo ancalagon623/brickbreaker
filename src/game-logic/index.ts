@@ -1,5 +1,4 @@
 import * as PIXI from 'pixi.js';
-import { DisplayObject } from 'pixi.js';
 import * as anim from './animations';
 import { GameObject, GameState } from './types';
 import { paddleSetup, ballSetup, bricksSetup } from './setup';
@@ -8,7 +7,7 @@ import { appConfig } from './config';
 
 // start the PIXI app that creates a loader, ticker, and renderer for us.
 
-const app = new PIXI.Application({
+export const app = new PIXI.Application({
   width: appConfig.w,
   height: appConfig.h,
   backgroundColor: 0x000000,
@@ -90,5 +89,3 @@ export const play = (resources: PIXI.utils.Dict<PIXI.LoaderResource>) => {
     }
   };
 };
-
-export default app;

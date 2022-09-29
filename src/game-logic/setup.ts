@@ -77,5 +77,9 @@ export const bricksSetup = (
     brickGrid.push(row);
   }
   bricksContainer.addChild(...brickGrid.flat());
+  bricksContainer.x = 10;
+  bricksContainer.y = 10;
+  bricksContainer.width = appConfig.w - 50;
+  bricksContainer.height = appConfig.h - 0.7 * appConfig.h;
   state.bricks = bricksContainer;
 };

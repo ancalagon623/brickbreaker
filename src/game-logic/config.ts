@@ -1,1 +1,1 @@
-export const appConfig = { w: 640, h: 690 };
+export const appConfig = { w: 600, h: 700 };

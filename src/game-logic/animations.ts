@@ -1,5 +1,5 @@
 import { SpriteWithVelocity, BallSprite } from './types';
-import { borderCollisionTest, paddleAndBallCollisionTest } from './game-events';
+import { borderCollisionTest, paddleAndBallCollisionTest } from './tests';
 
 // define a function that allows us to change the velocity of the sprite.
 export const animateX = (

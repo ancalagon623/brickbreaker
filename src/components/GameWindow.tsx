@@ -1,11 +1,17 @@
 import React, { useEffect } from 'react';
 import * as PIXI from 'pixi.js';
-import app, { play } from '../game-logic';
+import useWindowHeight from '../hooks/useWindowHeight';
+import useWindowWidth from '../hooks/useWindowWidth';
+import { app, play } from '../game-logic';
 
 const GameWindow = () => {
+  const windowWidth = useWindowWidth();
+  const windowHeight = useWindowHeight();
+
   useEffect(() => {
     const frame = document.getElementById('game-window');
     if (frame) {
+      app.resizeTo = window;
       frame.appendChild(app.view);
     }
 
