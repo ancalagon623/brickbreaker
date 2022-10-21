@@ -6,11 +6,11 @@ const rules = ['rule 1', 'rule 2', 'rule 3'];
 
 const Content: React.FC = () => (
   <Main>
-    <GameRules>
+    {/* <GameRules>
       {rules.map((rule, i) => (
         <p key={i}>{rule}</p>
       ))}
-    </GameRules>
+    </GameRules> */}
     <GameWindow />
   </Main>
 );

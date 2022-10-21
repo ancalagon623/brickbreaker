@@ -1,5 +1,16 @@
-import { SpriteWithVelocity, BallSprite } from './types';
-import { borderCollisionTest, paddleAndBallCollisionTest } from './tests';
+import { Container, DisplayObject } from 'pixi.js';
+import {
+  SpriteWithVelocity,
+  BallSprite,
+  GameState,
+  Config,
+  Brick,
+} from './types';
+import {
+  ballAndBrickCollisionTest,
+  borderCollisionTest,
+  paddleAndBallCollisionTest,
+} from './tests';
 
 // define a function that allows us to change the velocity of the sprite.
 export const animateX = (
@@ -25,12 +36,13 @@ export const endXAnimation = (sprite: SpriteWithVelocity) => {
 };
 
 export const updatePaddleVelocity = (
-  paddle: SpriteWithVelocity | undefined
+  paddle: SpriteWithVelocity | undefined,
+  config: Config
 ) => {
   // check whether the paddle is touching a border
   // but first make a type guard to ensure the function doesn't operate on an undefined value
   if (typeof paddle === 'undefined') return;
-  const { borders } = borderCollisionTest(paddle);
+  const { borders } = borderCollisionTest(paddle, config);
   if (typeof paddle.vx === 'number' && borders?.left && paddle.vx < 0) {
     endXAnimation(paddle);
   } else if (typeof paddle.vx === 'number' && borders?.right && paddle.vx > 0) {
@@ -40,7 +52,9 @@ export const updatePaddleVelocity = (
 
 export const updateBallVelocity = (
   paddle: SpriteWithVelocity | undefined,
-  ball: BallSprite | undefined
+  ball: BallSprite | undefined,
+  brickGrid: DisplayObject[] | undefined,
+  config: Config
 ) => {
   if (
     typeof ball === 'undefined' ||
@@ -50,8 +64,11 @@ export const updateBallVelocity = (
     paddle.vx === undefined
   )
     return ball;
-  const { borders } = borderCollisionTest(ball);
+
+  // all checks go here
+  const { borders } = borderCollisionTest(ball, config);
   const { paddleCollision } = paddleAndBallCollisionTest(paddle, ball);
+  const brickCollision = ballAndBrickCollisionTest(ball, brickGrid);
   // same process for changing the paddle velocity, only there are different rules for how the ball reflects off the walls.
   if (borders?.left || borders?.right) {
     animateX(ball, ball.vx * -1);

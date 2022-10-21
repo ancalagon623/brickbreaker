@@ -9,11 +9,16 @@
         "node_modules/resource-loader/typings/resource-loader.d.ts"
       ],
       "pixi.js": ["node_modules/pixi.js/index.d.ts"],
-      "*": ["*", "node_modules/*/index.d.ts", "node_modules/*/types/index.d.ts"]
+      "*": [
+        "*",
+        "src/*",
+        "node_modules/*/index.d.ts",
+        "node_modules/*/types/index.d.ts"
+      ]
     },
     "allowSyntheticDefaultImports": true,
     "allowUmdGlobalAccess": true,
-    "baseUrl": "./",
+    "baseUrl": "src",
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,

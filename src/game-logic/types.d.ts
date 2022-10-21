@@ -1,5 +1,11 @@
 import { Container, Sprite } from 'pixi.js';
 
+export enum Collisions {
+  Vertical,
+  Horizontal,
+  None,
+}
+
 export interface SpriteWithVelocity extends Sprite {
   vx?: number;
   vy?: number;
@@ -11,13 +17,21 @@ export interface SpriteWithVelocity extends Sprite {
   };
 }
 
-export type Bricks = Container;
+export type BrickContainer = Container;
 
 export interface BallSprite extends SpriteWithVelocity {
   paddleCollision?: string;
 }
 
 export type PaddleSprite = SpriteWithVelocity;
+
+export interface Brick extends Sprite {
+  collision?: {
+    _warning: Collisions;
+    type: Collisions;
+    broken: boolean;
+  };
+}
 
 // Input listeners for the game control keys
 export interface KeyObject {
@@ -30,11 +44,19 @@ export interface KeyObject {
   unsubscribe?: () => void;
 }
 
+export interface Config {
+  width: number;
+  height: number;
+}
+
 // Game State Object
 export type GameState = {
-  bricks?: Bricks;
-  paddle?: PaddleSprite;
-  ball?: BallSprite;
+  config: Config;
+  renderList: {
+    bricks?: BrickContainer;
+    paddle?: PaddleSprite;
+    ball?: BallSprite;
+  };
 };
 
-export type GameObject = PaddleSprite | BallSprite | Bricks;
+export type GameObject = PaddleSprite | BallSprite | BrickContainer;

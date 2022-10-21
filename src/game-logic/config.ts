@@ -1,1 +1,2 @@
-export const appConfig = { w: 600, h: 700 };
+import * as PIXI from 'pixi.js';
+// start the PIXI app that creates a loader, ticker, and renderer for us.
