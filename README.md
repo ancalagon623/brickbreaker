@@ -2,7 +2,8 @@
 
 I used create-react-app to set this project up initially, but with the typescript option enabled.
 
-There are two main sections of the app: the React components that give the page its structure and layout.
+There are two main sections of the app: the React components that give the page its structure and layout, and the game logic that is built on Pixi.js' display and rendering system.
+
 ### This part is still in progress.
 The other section contains all of the Pixi.js game logic, and this is where the magic happens. Without this stuff the page would be the bare layout with a black canvas in the center.
 
