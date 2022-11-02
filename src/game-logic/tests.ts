@@ -18,7 +18,7 @@ export const borderCollisionTest = (
   // first make a type check to ensure the sprite is not undefined
   if (typeof sprite === 'undefined' || !config) return new PIXI.Sprite();
 
-  sprite.borders = {
+  sprite.borderCollision = {
     left: false,
     right: false,
     top: false,
@@ -26,23 +26,23 @@ export const borderCollisionTest = (
   };
 
   if (
-    sprite.borders &&
+    sprite.borderCollision &&
     sprite.x + sprite.texture.width * sprite.scale.x >= config.width
   ) {
-    sprite.borders.right = true;
+    sprite.borderCollision.right = true;
   }
-  if (sprite.borders && sprite.x <= 0) {
-    sprite.borders.left = true;
+  if (sprite.borderCollision && sprite.x <= 0) {
+    sprite.borderCollision.left = true;
   }
   // check vertical sides
   if (
-    sprite.borders &&
+    sprite.borderCollision &&
     sprite.y + sprite.texture.height * sprite.scale.y >= config.height
   ) {
-    sprite.borders.bottom = true;
+    sprite.borderCollision.bottom = true;
   }
-  if (sprite.borders && sprite.y <= 0) {
-    sprite.borders.top = true;
+  if (sprite.borderCollision && sprite.y <= 0) {
+    sprite.borderCollision.top = true;
   }
 
   return sprite;
@@ -54,7 +54,7 @@ export const paddleAndBallCollisionTest = (
 ): BallSprite => {
   if (typeof paddle === 'undefined' || !ball.vy) return ball;
   // reset old test
-  ball.paddleCollision = undefined;
+  ball.paddleCollision = '';
   const paddleWidth = paddle.texture.width * paddle.scale.x;
   const ballWidth = ball.texture.width * ball.scale.x;
   const ballHeight = ball.texture.height * ball.scale.y;
@@ -83,7 +83,7 @@ export const ballAndBrickCollisionTest = (
   const hitBricks = brickGrid.filter((brick) => {
     const globalBrickCenter = brick.toGlobal(new PIXI.Point(0, 0));
     // ignore this brick if it's already been hit
-    if (brick.collision?.broken !== true) return;
+    if (brick.ballCollision.broken !== true) return;
 
     const yDiff = Math.abs(globalBrickCenter.y - ball.y);
     const xDiff = Math.abs(globalBrickCenter.x - ball.x);

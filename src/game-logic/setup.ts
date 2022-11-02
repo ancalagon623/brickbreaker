@@ -60,14 +60,14 @@ export const bricksSetup = (
   const adjustedHeight = textures.brick2.height * brickScale;
   const numberOfRows = 6;
   const bricksPerRow = 10;
-  const bricksContainer: BrickContainer = new PIXI.Container();
+  const bricksContainer = new PIXI.Container();
   const brickGrid = [];
 
   for (let i = 0; i < numberOfRows; i += 1) {
     const row: Array<Brick | Sprite> = [];
     for (let j = 0; j < bricksPerRow; j += 1) {
       // initialize the brick
-      const newBrick: Brick = new Sprite(textures.brick2);
+      const newBrick: Brick = new Brick(textures.brick2);
       newBrick.collision = {
         type: Collisions.None,
         _warning: Collisions.None,

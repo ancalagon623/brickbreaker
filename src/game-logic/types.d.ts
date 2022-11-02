@@ -7,9 +7,9 @@ export enum Collisions {
 }
 
 export interface SpriteWithVelocity extends Sprite {
-  vx?: number;
-  vy?: number;
-  borders?: {
+  vx: number;
+  vy: number;
+  borderCollision: {
     left: boolean;
     right: boolean;
     top: boolean;
@@ -17,16 +17,18 @@ export interface SpriteWithVelocity extends Sprite {
   };
 }
 
-export type BrickContainer = Container;
+export interface BrickContainer extends Container {
+  children: Brick[];
+}
 
 export interface BallSprite extends SpriteWithVelocity {
-  paddleCollision?: string;
+  paddleCollision: string;
 }
 
 export type PaddleSprite = SpriteWithVelocity;
 
 export interface Brick extends Sprite {
-  collision?: {
+  ballCollision: {
     _warning: Collisions;
     type: Collisions;
     broken: boolean;
