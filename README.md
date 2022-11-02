@@ -8,4 +8,4 @@ The second section is where the magic happens. Without this stuff the page would
 
 You can find the typsecript types in src/game-logic, and the game classes which are built off of Pixi's base classes in src/game-logic/models. Since Pixi's rendering logic is about as object oriented as JavaScript gets, I needed to define new classes for each type of game object.
 
-THe game is in progress. Contact me if you have any questions! Pixi is a great rendering engine by the way.
+The game is in progress. Contact me if you have any questions! Pixi is a great rendering engine by the way.
