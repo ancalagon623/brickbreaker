@@ -17,22 +17,22 @@ export interface SpriteWithVelocity extends Sprite {
   };
 }
 
-export interface BrickContainer extends Container {
-  children: Brick[];
-}
-
 export interface BallSprite extends SpriteWithVelocity {
   paddleCollision: string;
 }
 
 export type PaddleSprite = SpriteWithVelocity;
 
-export interface Brick extends Sprite {
+export interface BrickSprite extends Sprite {
   ballCollision: {
     _warning: Collisions;
     type: Collisions;
     broken: boolean;
   };
+}
+
+export interface BrickContainer extends Container {
+  children: BrickSprite[];
 }
 
 // Input listeners for the game control keys
@@ -55,9 +55,9 @@ export interface Config {
 export type GameState = {
   config: Config;
   renderList: {
-    bricks?: BrickContainer;
-    paddle?: PaddleSprite;
-    ball?: BallSprite;
+    bricks: BrickContainer;
+    paddle: PaddleSprite;
+    ball: BallSprite;
   };
 };
 

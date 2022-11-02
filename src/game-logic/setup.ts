@@ -1,17 +1,21 @@
 import * as PIXI from 'pixi.js';
 import type { Texture } from 'pixi.js';
 import { Sprite } from 'pixi.js';
-import { GameState, Brick, Collisions, BrickContainer } from './types';
+import Paddle from './models/paddle';
+import { GameState, BrickSprite, Collisions, BrickContainer } from './types';
+import Ball from './models/ball';
+import Brick from './models/brick';
+import Bricks from './models/brick-container';
 
 export const paddleSetup = (state: GameState, texture: Texture) => {
   // Create the paddle and add to the game state.
   const { renderList, config } = state;
-  renderList.paddle = new PIXI.Sprite(texture);
+  renderList.paddle = new Paddle(texture);
   if (!renderList.paddle || !config) return; // type checking
 
   // Give the paddle a velocity to be used in the game loop.
   renderList.paddle.vx = 0;
-  renderList.paddle.borders = {
+  renderList.paddle.borderCollision = {
     left: false,
     right: false,
     top: false,
@@ -28,13 +32,13 @@ export const paddleSetup = (state: GameState, texture: Texture) => {
 export const ballSetup = (state: GameState, texture: Texture) => {
   const { renderList, config } = state;
   // Create the paddle and add to the game state.
-  renderList.ball = new PIXI.Sprite(texture);
+  renderList.ball = new Ball(texture);
   if (!renderList.ball || !config) return;
 
   // Give the paddle a velocity to be used in the game loop.
   renderList.ball.vx = 2;
   renderList.ball.vy = -2;
-  renderList.ball.borders = {
+  renderList.ball.borderCollision = {
     left: false,
     right: false,
     top: false,
@@ -60,15 +64,15 @@ export const bricksSetup = (
   const adjustedHeight = textures.brick2.height * brickScale;
   const numberOfRows = 6;
   const bricksPerRow = 10;
-  const bricksContainer = new PIXI.Container();
+  const bricksContainer = new Bricks();
   const brickGrid = [];
 
   for (let i = 0; i < numberOfRows; i += 1) {
     const row: Array<Brick | Sprite> = [];
     for (let j = 0; j < bricksPerRow; j += 1) {
       // initialize the brick
-      const newBrick: Brick = new Brick(textures.brick2);
-      newBrick.collision = {
+      const newBrick = new Brick(textures.brick2);
+      newBrick.ballCollision = {
         type: Collisions.None,
         _warning: Collisions.None,
         broken: false,

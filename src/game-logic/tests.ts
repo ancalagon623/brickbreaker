@@ -1,11 +1,13 @@
 import * as PIXI from 'pixi.js';
 import { DisplayObject } from 'pixi.js';
+import MovingSprite from './models/base-models/moving-sprite';
 import {
   Config,
   SpriteWithVelocity,
   BallSprite,
-  Brick,
+  BrickSprite,
   Collisions,
+  PaddleSprite,
 } from './types';
 
 // I had to specify the return value here because otherwise the returned type would be composite,
@@ -16,7 +18,7 @@ export const borderCollisionTest = (
 ): SpriteWithVelocity => {
   // clear old borders collision check
   // first make a type check to ensure the sprite is not undefined
-  if (typeof sprite === 'undefined' || !config) return new PIXI.Sprite();
+  if (typeof sprite === 'undefined' || !config) return new MovingSprite();
 
   sprite.borderCollision = {
     left: false,
@@ -49,7 +51,7 @@ export const borderCollisionTest = (
 };
 
 export const paddleAndBallCollisionTest = (
-  paddle: SpriteWithVelocity | undefined,
+  paddle: PaddleSprite,
   ball: BallSprite
 ): BallSprite => {
   if (typeof paddle === 'undefined' || !ball.vy) return ball;
@@ -73,8 +75,9 @@ export const paddleAndBallCollisionTest = (
 
 export const ballAndBrickCollisionTest = (
   ball: BallSprite,
-  brickGrid: DisplayObject[] | undefined
+  brickGrid: BrickSprite[]
 ) => {
+  // type check
   if (!brickGrid) return Collisions.None;
   // the ball has collided with a brick when the vertical and horizontal distance from their anchors are both less than the sum of half their respective widths and heights.
   // The simplest way to do this would be to loop through the brickgrid and test the distance from every brickto find any bricks the ball is currently colliding with, and whether the collision is vertical or horizontal.
@@ -103,20 +106,20 @@ export const ballAndBrickCollisionTest = (
 
     if (brokenXLimit > 0 && brokenYLimit > 0) {
       // collision, find out which one and assign it to type
-      brick.collision.type =
-        brick.collision._warning === Collisions.Horizontal
+      brick.ballCollision.type =
+        brick.ballCollision._warning === Collisions.Horizontal
           ? Collisions.Horizontal
           : Collisions.Vertical;
       return true;
     }
     // if no collision has happened but one of the limits broke then a flag is turned on to note what collision may happen next.
     if (brokenXLimit === 0 && brokenYLimit === 0) {
-      brick.collision._warning = Collisions.None;
+      brick.ballCollision._warning = Collisions.None;
     } else if (brokenYLimit > 0) {
-      brick.collision._warning = Collisions.Horizontal;
+      brick.ballCollision._warning = Collisions.Horizontal;
     } else {
       // only the x limit has been broken
-      brick.collision._warning = Collisions.Vertical;
+      brick.ballCollision._warning = Collisions.Vertical;
     }
 
     return false;
@@ -124,7 +127,7 @@ export const ballAndBrickCollisionTest = (
 
   const collisionTypeCounter = hitBricks.reduce(
     (acc, brick) => {
-      if (brick.collision?.type === Collisions.Vertical) {
+      if (brick.ballCollision?.type === Collisions.Vertical) {
         acc.v += 1;
         return acc;
       }

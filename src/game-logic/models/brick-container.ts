@@ -1,6 +1,6 @@
 import { Container } from 'pixi.js';
-import { Brick } from '../types';
+import { BrickSprite } from '../types';
 
-export default class BrickContainer extends Container {
-  children: Brick[] = [];
+export default class Bricks extends Container {
+  children: BrickSprite[] = [];
 }

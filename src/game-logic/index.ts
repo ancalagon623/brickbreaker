@@ -3,6 +3,9 @@ import { Config, GameObject, GameState } from './types';
 import * as anim from './animations';
 import { paddleSetup, ballSetup, bricksSetup } from './setup';
 import { keyboard } from './event-listeners';
+import Bricks from './models/brick-container';
+import Ball from './models/ball';
+import Paddle from './models/paddle';
 
 export const play = (
   resources: PIXI.utils.Dict<PIXI.LoaderResource>,
@@ -11,7 +14,11 @@ export const play = (
 ) => {
   const state: GameState = {
     config,
-    renderList: {},
+    renderList: {
+      bricks: new Bricks(),
+      ball: new Ball(resources.ball.texture),
+      paddle: new Paddle(resources.paddle.texture),
+    },
   };
 
   const { renderList } = state;

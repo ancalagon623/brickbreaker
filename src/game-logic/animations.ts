@@ -4,7 +4,8 @@ import {
   BallSprite,
   GameState,
   Config,
-  Brick,
+  BrickSprite,
+  PaddleSprite,
 } from './types';
 import {
   ballAndBrickCollisionTest,
@@ -35,46 +36,38 @@ export const endXAnimation = (sprite: SpriteWithVelocity) => {
   sprite.vx = 0;
 };
 
-export const updatePaddleVelocity = (
-  paddle: SpriteWithVelocity | undefined,
-  config: Config
-) => {
+export const updatePaddleVelocity = (paddle: PaddleSprite, config: Config) => {
   // check whether the paddle is touching a border
-  // but first make a type guard to ensure the function doesn't operate on an undefined value
-  if (typeof paddle === 'undefined') return;
-  const { borders } = borderCollisionTest(paddle, config);
-  if (typeof paddle.vx === 'number' && borders?.left && paddle.vx < 0) {
+
+  const { borderCollision } = borderCollisionTest(paddle, config);
+  if (typeof paddle.vx === 'number' && borderCollision?.left && paddle.vx < 0) {
     endXAnimation(paddle);
-  } else if (typeof paddle.vx === 'number' && borders?.right && paddle.vx > 0) {
+  } else if (
+    typeof paddle.vx === 'number' &&
+    borderCollision?.right &&
+    paddle.vx > 0
+  ) {
     endXAnimation(paddle);
   }
 };
 
 export const updateBallVelocity = (
-  paddle: SpriteWithVelocity | undefined,
-  ball: BallSprite | undefined,
-  brickGrid: DisplayObject[] | undefined,
+  paddle: PaddleSprite,
+  ball: BallSprite,
+  brickGrid: BrickSprite[],
   config: Config
 ) => {
-  if (
-    typeof ball === 'undefined' ||
-    typeof paddle === 'undefined' ||
-    !ball.vx ||
-    !ball.vy ||
-    paddle.vx === undefined
-  )
-    return ball;
-
   // all checks go here
-  const { borders } = borderCollisionTest(ball, config);
+
+  const { borderCollision } = borderCollisionTest(ball, config);
   const { paddleCollision } = paddleAndBallCollisionTest(paddle, ball);
   const brickCollision = ballAndBrickCollisionTest(ball, brickGrid);
   // same process for changing the paddle velocity, only there are different rules for how the ball reflects off the walls.
-  if (borders?.left || borders?.right) {
+  if (borderCollision?.left || borderCollision?.right) {
     animateX(ball, ball.vx * -1);
   }
 
-  if (borders?.top || borders?.bottom) {
+  if (borderCollision?.top || borderCollision?.bottom) {
     animateY(ball, ball.vy * -1);
   }
 
