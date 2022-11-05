@@ -1,5 +1,4 @@
 import * as PIXI from 'pixi.js';
-import { DisplayObject } from 'pixi.js';
 import MovingSprite from './models/base-models/moving-sprite';
 import {
   Config,
@@ -27,23 +26,20 @@ export const borderCollisionTest = (
     bottom: false,
   };
 
-  if (
-    sprite.borderCollision &&
-    sprite.x + sprite.texture.width * sprite.scale.x >= config.width
-  ) {
+  const halfWidth = 0.5 * sprite.width;
+  const halfHeight = 0.5 * sprite.height;
+
+  if (sprite.x + halfWidth >= config.width) {
     sprite.borderCollision.right = true;
   }
-  if (sprite.borderCollision && sprite.x <= 0) {
+  if (sprite.x <= halfWidth) {
     sprite.borderCollision.left = true;
   }
   // check vertical sides
-  if (
-    sprite.borderCollision &&
-    sprite.y + sprite.texture.height * sprite.scale.y >= config.height
-  ) {
+  if (sprite.y + halfHeight >= config.height) {
     sprite.borderCollision.bottom = true;
   }
-  if (sprite.borderCollision && sprite.y <= 0) {
+  if (sprite.y <= halfHeight) {
     sprite.borderCollision.top = true;
   }
 
@@ -54,21 +50,17 @@ export const paddleAndBallCollisionTest = (
   paddle: PaddleSprite,
   ball: BallSprite
 ): BallSprite => {
-  if (typeof paddle === 'undefined' || !ball.vy) return ball;
   // reset old test
-  ball.paddleCollision = '';
-  const paddleWidth = paddle.texture.width * paddle.scale.x;
-  const ballWidth = ball.texture.width * ball.scale.x;
-  const ballHeight = ball.texture.height * ball.scale.y;
+  ball.paddleCollision = Collisions.None;
   // if ball is further than the paddle top and in between the paddle width then it has hit the paddle
   if (
-    ball.y >= paddle.y - ballHeight &&
+    ball.y >= paddle.y - ball.height &&
     ball.x > paddle.x &&
-    ball.x < paddle.x + paddleWidth &&
+    ball.x < paddle.x + paddle.width &&
     ball.vy > 0
   ) {
     // ball has collided with the top of the paddle
-    ball.paddleCollision = 'top';
+    ball.paddleCollision = Collisions.Vertical;
   }
   return ball;
 };
@@ -82,16 +74,18 @@ export const ballAndBrickCollisionTest = (
   // the ball has collided with a brick when the vertical and horizontal distance from their anchors are both less than the sum of half their respective widths and heights.
   // The simplest way to do this would be to loop through the brickgrid and test the distance from every brickto find any bricks the ball is currently colliding with, and whether the collision is vertical or horizontal.
 
+  console.log(brickGrid);
+
   // 1. Filter the brickgrid by
   const hitBricks = brickGrid.filter((brick) => {
     const globalBrickCenter = brick.toGlobal(new PIXI.Point(0, 0));
     // ignore this brick if it's already been hit
-    if (brick.ballCollision.broken !== true) return;
+    if (brick.ballCollision.broken === true) return false;
 
     const yDiff = Math.abs(globalBrickCenter.y - ball.y);
     const xDiff = Math.abs(globalBrickCenter.x - ball.x);
-    const yLimit = brick.texture.height / 2 + ball.texture.height / 2;
-    const xLimit = brick.texture.width / 2 + ball.texture.width / 2;
+    const yLimit = brick.height / 2 + ball.height / 2;
+    const xLimit = brick.width / 2 + ball.width / 2;
 
     let brokenYLimit = 0;
     let brokenXLimit = 0;
@@ -110,6 +104,7 @@ export const ballAndBrickCollisionTest = (
         brick.ballCollision._warning === Collisions.Horizontal
           ? Collisions.Horizontal
           : Collisions.Vertical;
+      brick.break();
       return true;
     }
     // if no collision has happened but one of the limits broke then a flag is turned on to note what collision may happen next.

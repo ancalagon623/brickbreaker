@@ -1,56 +1,55 @@
-import * as PIXI from 'pixi.js';
-import type { Texture } from 'pixi.js';
-import { Sprite } from 'pixi.js';
+import { Sprite, Texture } from 'pixi.js';
 import Paddle from './models/paddle';
-import { GameState, BrickSprite, Collisions, BrickContainer } from './types';
+import { GameState, Collisions } from './types';
 import Ball from './models/ball';
 import Brick from './models/brick';
 import Bricks from './models/brick-container';
 
-export const paddleSetup = (state: GameState, texture: Texture) => {
+export const paddleSetup = (state: GameState) => {
   // Create the paddle and add to the game state.
-  const { renderList, config } = state;
-  renderList.paddle = new Paddle(texture);
-  if (!renderList.paddle || !config) return; // type checking
+  const {
+    renderList: { paddle },
+    config,
+  } = state;
 
   // Give the paddle a velocity to be used in the game loop.
-  renderList.paddle.vx = 0;
-  renderList.paddle.borderCollision = {
+  paddle.vx = 0;
+  paddle.borderCollision = {
     left: false,
     right: false,
     top: false,
     bottom: false,
   };
   // resize the paddle and set in the middle of the screen
-  renderList.paddle.scale.set(0.4, 0.4);
-  renderList.paddle.position.set(
-    (config.width - renderList.paddle.texture.width * 0.4) / 2,
-    config.height - renderList.paddle.texture.height * 0.4 * 1.1
+  paddle.scale.set(0.4, 0.4);
+  paddle.anchor.set(0.5);
+  paddle.position.set(
+    config.width / 2,
+    config.height - (paddle.height / 2) * 1.1
   );
 };
 
-export const ballSetup = (state: GameState, texture: Texture) => {
-  const { renderList, config } = state;
-  // Create the paddle and add to the game state.
-  renderList.ball = new Ball(texture);
-  if (!renderList.ball || !config) return;
+export const ballSetup = (state: GameState) => {
+  const {
+    renderList: { ball, paddle },
+    config,
+  } = state;
 
   // Give the paddle a velocity to be used in the game loop.
-  renderList.ball.vx = 2;
-  renderList.ball.vy = -2;
-  renderList.ball.borderCollision = {
+  ball.vx = 2;
+  ball.vy = -2;
+  ball.borderCollision = {
     left: false,
     right: false,
     top: false,
     bottom: false,
   };
   // resize the ball and set ontop of the paddle
-  renderList.ball.scale.set(0.05, 0.05);
-  renderList.ball.anchor.set(0.5);
-  renderList.ball.position.set(
-    (config.width - renderList.ball.texture.width * 0.05) / 2,
-    config.height -
-      (renderList.paddle ? renderList.paddle.texture.height : 0) * 0.4
+  ball.scale.set(0.05, 0.05);
+  ball.anchor.set(0.5);
+  ball.position.set(
+    (config.width - ball.texture.width * 0.05) / 2,
+    config.height - (paddle ? paddle.texture.height : 0) * 0.4
   );
 };
 
@@ -79,16 +78,12 @@ export const bricksSetup = (
       };
 
       newBrick.anchor.set(0.5);
-      if (!newBrick) {
-        row.push(new Sprite());
-      } else {
-        newBrick.scale.set(brickScale);
-        newBrick.position.set(
-          (adjustedWidth + 10) * j,
-          (adjustedHeight + 10) * i
-        );
-        row.push(newBrick);
-      }
+      newBrick.scale.set(brickScale);
+      newBrick.position.set(
+        (adjustedWidth + 10) * j,
+        (adjustedHeight + 10) * i
+      );
+      row.push(newBrick);
     }
     brickGrid.push(row);
   }

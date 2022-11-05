@@ -7,4 +7,13 @@ export default class Brick extends Sprite {
     type: Collisions.None,
     broken: false,
   };
+
+  breakingAnimation = {
+    stage: 0,
+  };
+
+  break() {
+    this.ballCollision.broken = true;
+    this.breakingAnimation.stage = 1;
+  }
 }

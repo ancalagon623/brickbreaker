@@ -1,8 +1,7 @@
-import { Container, DisplayObject } from 'pixi.js';
 import {
   SpriteWithVelocity,
   BallSprite,
-  GameState,
+  Collisions,
   Config,
   BrickSprite,
   PaddleSprite,
@@ -63,16 +62,28 @@ export const updateBallVelocity = (
   const { paddleCollision } = paddleAndBallCollisionTest(paddle, ball);
   const brickCollision = ballAndBrickCollisionTest(ball, brickGrid);
   // same process for changing the paddle velocity, only there are different rules for how the ball reflects off the walls.
-  if (borderCollision?.left || borderCollision?.right) {
+  if (borderCollision.left || borderCollision.right) {
     animateX(ball, ball.vx * -1);
   }
 
-  if (borderCollision?.top || borderCollision?.bottom) {
+  if (borderCollision.top || borderCollision.bottom) {
+    animateY(ball, ball.vy * -1);
+  }
+
+  if (brickCollision === Collisions.Horizontal) {
+    animateX(ball, ball.vx * -1);
+  }
+
+  if (brickCollision === Collisions.Vertical) {
     animateY(ball, ball.vy * -1);
   }
 
   // animate based on the paddle collision
-  if (paddleCollision === 'top') {
+  if (paddleCollision === Collisions.Vertical) {
     animateY(ball, ball.vy * -1);
+  }
+
+  if (paddleCollision === Collisions.Horizontal) {
+    animateX(ball, ball.vx * -1);
   }
 };

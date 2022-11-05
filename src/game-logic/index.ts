@@ -14,6 +14,9 @@ export const play = (
 ) => {
   const state: GameState = {
     config,
+    // animationResources: {
+
+    // }
     renderList: {
       bricks: new Bricks(),
       ball: new Ball(resources.ball.texture),
@@ -29,19 +32,9 @@ export const play = (
     resources.ball.texture &&
     resources.brick2.texture
   ) {
-    paddleSetup(state, resources.paddle.texture);
-    ballSetup(state, resources.ball.texture);
+    paddleSetup(state);
+    ballSetup(state);
     bricksSetup(state, { brick2: resources.brick2.texture });
-  }
-
-  if (
-    renderList.paddle === undefined ||
-    renderList.ball === undefined ||
-    renderList.bricks === undefined
-  ) {
-    throw new Error(
-      'State is incomplete. Check the loader function to make sure the resources were loaded properly'
-    );
   }
 
   // initialize the arrow key listeners and add the animation callbacks
@@ -80,15 +73,15 @@ export const play = (
     );
 
     // animate the ball
-    if (renderList.ball?.vx) {
+    if (renderList.ball.vx) {
       renderList.ball.x += delta * renderList.ball.vx;
     }
-    if (renderList.ball?.vy) {
+    if (renderList.ball.vy) {
       renderList.ball.y += delta * renderList.ball.vy;
     }
 
     // animate the paddle
-    if (renderList.paddle?.vx) {
+    if (renderList.paddle.vx) {
       renderList.paddle.x += delta * renderList.paddle.vx;
     }
   });

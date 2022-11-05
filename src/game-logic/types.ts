@@ -18,7 +18,7 @@ export interface SpriteWithVelocity extends Sprite {
 }
 
 export interface BallSprite extends SpriteWithVelocity {
-  paddleCollision: string;
+  paddleCollision: Collisions;
 }
 
 export type PaddleSprite = SpriteWithVelocity;
@@ -29,6 +29,12 @@ export interface BrickSprite extends Sprite {
     type: Collisions;
     broken: boolean;
   };
+
+  breakingAnimation: {
+    stage: number;
+  };
+
+  break: () => void;
 }
 
 export interface BrickContainer extends Container {
