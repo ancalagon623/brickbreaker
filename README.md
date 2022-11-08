@@ -1,6 +1,6 @@
 ## Setup
 
-## npm start
+### npm start
 
 I used create-react-app to set this project up initially, but with the typescript option enabled.
 
