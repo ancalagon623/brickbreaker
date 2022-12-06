@@ -1,7 +1,5 @@
 import * as PIXI from 'pixi.js';
-import MovingSprite from './models/base-models/moving-sprite';
 import {
-  Config,
   SpriteWithVelocity,
   BallSprite,
   BrickSprite,
@@ -9,15 +7,11 @@ import {
   PaddleSprite,
 } from './types';
 
-// I had to specify the return value here because otherwise the returned type would be composite,
-// and typescript expects it to be a simple type when assigning it as an argument in other functions.
 export const borderCollisionTest = (
-  sprite: SpriteWithVelocity | undefined,
-  config: Config
+  sprite: SpriteWithVelocity,
+  stage: PIXI.Container
 ): SpriteWithVelocity => {
   // clear old borders collision check
-  // first make a type check to ensure the sprite is not undefined
-  if (typeof sprite === 'undefined' || !config) return new MovingSprite();
 
   sprite.borderCollision = {
     left: false,
@@ -29,17 +23,17 @@ export const borderCollisionTest = (
   const halfWidth = 0.5 * sprite.width;
   const halfHeight = 0.5 * sprite.height;
 
-  if (sprite.x + halfWidth >= config.width) {
+  if (sprite.x + halfWidth >= stage.width && sprite.vx > 0) {
     sprite.borderCollision.right = true;
   }
-  if (sprite.x <= halfWidth) {
+  if (sprite.x <= halfWidth && sprite.vx < 0) {
     sprite.borderCollision.left = true;
   }
   // check vertical sides
-  if (sprite.y + halfHeight >= config.height) {
+  if (sprite.y + halfHeight >= stage.height && sprite.vy > 0) {
     sprite.borderCollision.bottom = true;
   }
-  if (sprite.y <= halfHeight) {
+  if (sprite.y <= halfHeight && sprite.vy < 0) {
     sprite.borderCollision.top = true;
   }
 
@@ -52,11 +46,16 @@ export const paddleAndBallCollisionTest = (
 ): BallSprite => {
   // reset old test
   ball.paddleCollision = Collisions.None;
-  // if ball is further than the paddle top and in between the paddle width then it has hit the paddle
+  const paddleHalfHeight = paddle.height * 0.5;
+  const paddleHalfWidth = paddle.width * 0.5;
+  const ballHalfHeight = ball.height * 0.5;
+  const ballHalfWidth = ball.width * 0.5;
+
   if (
-    ball.y >= paddle.y - ball.height &&
-    ball.x > paddle.x &&
-    ball.x < paddle.x + paddle.width &&
+    ballHalfHeight + paddleHalfHeight >= Math.abs(ball.y - paddle.y) &&
+    ballHalfWidth + paddleHalfWidth >= Math.abs(ball.x - paddle.x) &&
+    ball.x >= paddle.x - paddleHalfWidth &&
+    ball.x <= paddle.x + paddleHalfWidth &&
     ball.vy > 0
   ) {
     // ball has collided with the top of the paddle
@@ -74,9 +73,7 @@ export const ballAndBrickCollisionTest = (
   // the ball has collided with a brick when the vertical and horizontal distance from their anchors are both less than the sum of half their respective widths and heights.
   // The simplest way to do this would be to loop through the brickgrid and test the distance from every brickto find any bricks the ball is currently colliding with, and whether the collision is vertical or horizontal.
 
-  console.log(brickGrid);
-
-  // 1. Filter the brickgrid by
+  // 1. Filter the bricks that have been hit
   const hitBricks = brickGrid.filter((brick) => {
     const globalBrickCenter = brick.toGlobal(new PIXI.Point(0, 0));
     // ignore this brick if it's already been hit

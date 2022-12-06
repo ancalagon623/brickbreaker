@@ -1,5 +1,5 @@
 import * as PIXI from 'pixi.js';
-import { Config, GameObject, GameState } from './types';
+import { GameObject, GameState } from './types';
 import * as anim from './animations';
 import { paddleSetup, ballSetup, bricksSetup } from './setup';
 import { keyboard } from './event-listeners';
@@ -8,15 +8,14 @@ import Ball from './models/ball';
 import Paddle from './models/paddle';
 
 export const play = (
-  resources: PIXI.utils.Dict<PIXI.LoaderResource>,
   app: PIXI.Application,
-  config: Config
+  resources: PIXI.utils.Dict<PIXI.LoaderResource>
 ) => {
   const state: GameState = {
-    config,
-    // animationResources: {
+    app,
 
-    // }
+    score: 0,
+
     renderList: {
       bricks: new Bricks(),
       ball: new Ball(resources.ball.texture),
@@ -34,7 +33,7 @@ export const play = (
   ) {
     paddleSetup(state);
     ballSetup(state);
-    bricksSetup(state, { brick2: resources.brick2.texture });
+    bricksSetup(state, { brick: resources.brick2.texture });
   }
 
   // initialize the arrow key listeners and add the animation callbacks
@@ -63,13 +62,13 @@ export const play = (
   // start the game loop
   app.ticker.add((delta: number) => {
     // check the paddle's position and update the velocity as necessary.
-    anim.updatePaddleVelocity(renderList.paddle, config);
+    anim.updatePaddleVelocity(renderList.paddle, app.stage);
     // check the ball's position and change it if it hits a side or the paddle
     anim.updateBallVelocity(
       renderList.paddle,
       renderList.ball,
       renderList.bricks?.children,
-      config
+      app.stage
     );
 
     // animate the ball

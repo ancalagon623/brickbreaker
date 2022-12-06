@@ -1,4 +1,4 @@
-import { Container, Sprite } from 'pixi.js';
+import { Application, Container, Sprite } from 'pixi.js';
 
 export enum Collisions {
   Vertical,
@@ -53,13 +53,13 @@ export interface KeyObject {
 }
 
 export interface Config {
-  width: number;
-  height: number;
+  app: Application;
 }
 
 // Game State Object
 export type GameState = {
-  config: Config;
+  app: Application;
+  score: number;
   renderList: {
     bricks: BrickContainer;
     paddle: PaddleSprite;
