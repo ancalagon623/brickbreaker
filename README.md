@@ -1,5 +1,7 @@
 ## Setup
 
+### npm start
+
 I used create-react-app to set this project up initially, but with the typescript option enabled.
 
 There are two main sections of the app: the React components that give the page its structure and layout, and the actual game logic built on Pixi.js' display and rendering system.
