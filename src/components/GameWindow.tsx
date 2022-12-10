@@ -8,7 +8,7 @@ const GameWindow = () => {
 
   useEffect(() => {
     const APP = new PIXI.Application({
-      width: 1200,
+      width: 800,
       height: 800,
       backgroundColor: 0x000000,
     });

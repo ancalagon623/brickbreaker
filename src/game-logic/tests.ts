@@ -9,7 +9,7 @@ import {
 
 export const borderCollisionTest = (
   sprite: SpriteWithVelocity,
-  stage: PIXI.Container
+  renderer: PIXI.Renderer | PIXI.AbstractRenderer
 ): SpriteWithVelocity => {
   // clear old borders collision check
 
@@ -23,14 +23,14 @@ export const borderCollisionTest = (
   const halfWidth = 0.5 * sprite.width;
   const halfHeight = 0.5 * sprite.height;
 
-  if (sprite.x + halfWidth >= stage.width && sprite.vx > 0) {
+  if (sprite.x + halfWidth >= renderer.view.width && sprite.vx > 0) {
     sprite.borderCollision.right = true;
   }
   if (sprite.x <= halfWidth && sprite.vx < 0) {
     sprite.borderCollision.left = true;
   }
   // check vertical sides
-  if (sprite.y + halfHeight >= stage.height && sprite.vy > 0) {
+  if (sprite.y + halfHeight >= renderer.view.height && sprite.vy > 0) {
     sprite.borderCollision.bottom = true;
   }
   if (sprite.y <= halfHeight && sprite.vy < 0) {

@@ -29,7 +29,7 @@ export default class Brick extends Sprite {
     this.breakingAnimation.stage += 1;
     if (this.breakingAnimation.stage === 3) {
       this.ballCollision.broken = true;
-      this.state.score += 1;
+      this.state.increaseScore(1);
       this.renderable = false;
     } else {
       const { stage, textures } = this.breakingAnimation;

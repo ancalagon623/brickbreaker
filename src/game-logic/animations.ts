@@ -1,9 +1,8 @@
-import { Container } from 'pixi.js';
+import { AbstractRenderer, Renderer } from 'pixi.js';
 import {
   SpriteWithVelocity,
   BallSprite,
   Collisions,
-  Config,
   BrickSprite,
   PaddleSprite,
 } from './types';
@@ -38,18 +37,14 @@ export const endXAnimation = (sprite: SpriteWithVelocity) => {
 
 export const updatePaddleVelocity = (
   paddle: PaddleSprite,
-  stage: Container
+  renderer: Renderer | AbstractRenderer
 ) => {
   // check whether the paddle is touching a border
 
-  const { borderCollision } = borderCollisionTest(paddle, stage);
+  const { borderCollision } = borderCollisionTest(paddle, renderer);
   if (typeof paddle.vx === 'number' && borderCollision?.left && paddle.vx < 0) {
     endXAnimation(paddle);
-  } else if (
-    typeof paddle.vx === 'number' &&
-    borderCollision?.right &&
-    paddle.vx > 0
-  ) {
+  } else if (borderCollision.right && paddle.vx > 0) {
     endXAnimation(paddle);
   }
 };
@@ -58,11 +53,11 @@ export const updateBallVelocity = (
   paddle: PaddleSprite,
   ball: BallSprite,
   brickGrid: BrickSprite[],
-  stage: Container
+  renderer: Renderer | AbstractRenderer
 ) => {
   // all checks go here
 
-  const { borderCollision } = borderCollisionTest(ball, stage);
+  const { borderCollision } = borderCollisionTest(ball, renderer);
   const { paddleCollision } = paddleAndBallCollisionTest(paddle, ball);
   const brickCollision = ballAndBrickCollisionTest(ball, brickGrid);
   // same process for changing the paddle velocity, only there are different rules for how the ball reflects off the walls.
