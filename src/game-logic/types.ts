@@ -19,6 +19,7 @@ export interface SpriteWithVelocity extends Sprite {
 
 export interface BallSprite extends SpriteWithVelocity {
   paddleCollision: Collisions;
+  lost: boolean;
 }
 
 export type PaddleSprite = SpriteWithVelocity;
@@ -55,6 +56,8 @@ export interface KeyObject {
 export interface Config {
   app: Application;
 }
+
+export type UpdateFunction = (delta: number) => void;
 
 // Game State Object
 export type GameState = {

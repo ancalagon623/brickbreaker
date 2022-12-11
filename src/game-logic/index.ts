@@ -10,8 +10,42 @@ export const play = (
   resources: PIXI.utils.Dict<PIXI.LoaderResource>
 ) => {
   const state = new State(app, resources);
-
   const { renderList } = state;
+  const updaters = {
+    stop(delta: number) {
+      app.stage.alpha = 0.3;
+    },
+    run(delta: number) {
+      // check the paddle's position and update the velocity as necessary.
+      anim.updatePaddleVelocity(renderList.paddle, app.renderer);
+      // check the ball's position and change it if it hits a side or the paddle
+      anim.updateBallVelocity(
+        renderList.paddle,
+        renderList.ball,
+        renderList.bricks.children,
+        app.renderer
+      );
+
+      // animate the ball
+      if (renderList.ball.vx) {
+        renderList.ball.x += delta * renderList.ball.vx;
+      }
+      if (renderList.ball.vy) {
+        renderList.ball.y += delta * renderList.ball.vy;
+      }
+      if (renderList.ball.lost) {
+        renderList.ball.visible = false;
+      }
+      if (renderList.paddle.vx) {
+        // animate the paddle
+        renderList.paddle.x += delta * renderList.paddle.vx;
+      }
+    },
+  };
+
+  let updateState: (delta: number) => void;
+
+  updateState = updaters.run.bind(updaters);
 
   // Create paddle, ball, and brick sprites and add to the state object.
   if (
@@ -49,27 +83,9 @@ export const play = (
 
   // start the game loop
   app.ticker.add((delta: number) => {
-    // check the paddle's position and update the velocity as necessary.
-    anim.updatePaddleVelocity(renderList.paddle, app.renderer);
-    // check the ball's position and change it if it hits a side or the paddle
-    anim.updateBallVelocity(
-      renderList.paddle,
-      renderList.ball,
-      renderList.bricks?.children,
-      app.renderer
-    );
-
-    // animate the ball
-    if (renderList.ball.vx) {
-      renderList.ball.x += delta * renderList.ball.vx;
-    }
-    if (renderList.ball.vy) {
-      renderList.ball.y += delta * renderList.ball.vy;
-    }
-
-    // animate the paddle
-    if (renderList.paddle.vx) {
-      renderList.paddle.x += delta * renderList.paddle.vx;
+    updateState(delta);
+    if (renderList.ball.lost) {
+      updateState = updaters.stop.bind(updaters);
     }
   });
 

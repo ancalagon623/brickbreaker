@@ -69,7 +69,7 @@ export const updateBallVelocity = (
     animateX(ball, ball.vx * -1);
   }
 
-  if (borderCollision.top || borderCollision.bottom) {
+  if (borderCollision.top) {
     animateY(ball, ball.vy * -1);
   }
 
@@ -81,12 +81,16 @@ export const updateBallVelocity = (
     animateY(ball, ball.vy * -1);
   }
 
-  // animate based on the paddle collision
   if (paddleCollision === Collisions.Vertical) {
     animateY(ball, ball.vy * -1);
   }
 
   if (paddleCollision === Collisions.Horizontal) {
     animateX(ball, ball.vx * -1);
+  }
+
+  if (ball.y >= ball.height / 2 + renderer.view.height) {
+    // ball has past the bottom threshold
+    ball.lost = true;
   }
 };
