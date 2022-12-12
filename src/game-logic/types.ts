@@ -59,16 +59,4 @@ export interface Config {
 
 export type UpdateFunction = (delta: number) => void;
 
-// Game State Object
-export type GameState = {
-  app: Application;
-  score: number;
-  increaseScore: (num: number) => void;
-  renderList: {
-    bricks: BrickContainer;
-    paddle: PaddleSprite;
-    ball: BallSprite;
-  };
-};
-
 export type GameObject = PaddleSprite | BallSprite | BrickContainer | Text;

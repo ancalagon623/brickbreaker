@@ -1,13 +1,14 @@
 import { Sprite, Texture } from 'pixi.js';
-import { Collisions, GameState } from '../types';
+import { Collisions } from '../types';
+import State from './state';
 
 export default class Brick extends Sprite {
-  constructor(state: GameState, texture: Texture) {
+  constructor(state: State, texture: Texture) {
     super(texture);
     this.state = state;
   }
 
-  state: GameState;
+  state: State;
 
   // these are attributes which help the test functions calculate whether the ball has collided with a brick
   ballCollision = {
@@ -30,7 +31,7 @@ export default class Brick extends Sprite {
     if (this.breakingAnimation.stage === 3) {
       this.ballCollision.broken = true;
       this.state.increaseScore(1);
-      this.renderable = false;
+      this.visible = false;
     } else {
       const { stage, textures } = this.breakingAnimation;
       this.texture = textures[`stage${stage}` as keyof typeof textures];

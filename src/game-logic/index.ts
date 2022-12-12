@@ -1,5 +1,4 @@
 import * as PIXI from 'pixi.js';
-import { GameObject } from './types';
 import * as anim from './animations';
 import { paddleSetup, ballSetup, bricksSetup } from './setup';
 import { keyboard } from './event-listeners';
@@ -10,10 +9,11 @@ export const play = (
   resources: PIXI.utils.Dict<PIXI.LoaderResource>
 ) => {
   const state = new State(app, resources);
-  const { renderList } = state;
+  const { renderList, gameOverRenderList } = state;
   const updaters = {
     stop(delta: number) {
-      app.stage.alpha = 0.3;
+      renderList.root.visible = false;
+      gameOverRenderList.root.visible = true;
     },
     run(delta: number) {
       // check the paddle's position and update the velocity as necessary.
@@ -39,6 +39,10 @@ export const play = (
       if (renderList.paddle.vx) {
         // animate the paddle
         renderList.paddle.x += delta * renderList.paddle.vx;
+      }
+
+      if (renderList.ball.lost) {
+        updateState = this.stop.bind(this);
       }
     },
   };
@@ -78,16 +82,14 @@ export const play = (
     }
   };
 
-  // add and render the sprites to the stage
-  app.stage.addChild(...Object.values<GameObject>(renderList));
-
   // start the game loop
   app.ticker.add((delta: number) => {
     updateState(delta);
-    if (renderList.ball.lost) {
-      updateState = updaters.stop.bind(updaters);
-    }
   });
+
+  // add and render the two to the stage
+  app.stage.addChild(state.gameOverRenderList.root);
+  app.stage.addChild(state.renderList.root);
 
   // return a cleanup function
   return () => {

@@ -1,10 +1,9 @@
 import { Texture } from 'pixi.js';
-import { GameState } from './types';
 import Brick from './models/brick';
 import Bricks from './models/brick-container';
 import State from './models/state';
 
-export const paddleSetup = (state: GameState) => {
+export const paddleSetup = (state: State) => {
   const {
     renderList: { paddle },
     app: { renderer },
@@ -38,7 +37,7 @@ export const ballSetup = (state: State) => {
   );
 };
 
-export const bricksSetup = (state: GameState, textures: { brick: Texture }) => {
+export const bricksSetup = (state: State, textures: { brick: Texture }) => {
   const numberOfRows = 8;
   const bricksPerRow = 16;
   const brickSlotWidth = state.app.renderer.view.width / bricksPerRow;
@@ -61,8 +60,5 @@ export const bricksSetup = (state: GameState, textures: { brick: Texture }) => {
     }
   }
 
-  // bricksContainer.width = state.app.renderer.view.width - 50;
-  // bricksContainer.height =
-  //   state.app.renderer.view.height - 0.7 * state.app.renderer.view.height;
   state.renderList.bricks = bricksContainer;
 };
