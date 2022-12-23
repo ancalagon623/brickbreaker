@@ -1,6 +1,7 @@
-import { Texture } from 'pixi.js';
+import { Texture, utils } from 'pixi.js';
 import Brick from './models/brick';
 import Bricks from './models/brick-container';
+import BrickTier2 from './models/brick-tier-2';
 import State from './models/state';
 
 export const paddleSetup = (state: State) => {
@@ -37,17 +38,54 @@ export const ballSetup = (state: State) => {
   );
 };
 
-export const bricksSetup = (state: State, textures: { brick: Texture }) => {
+function sampleWithoutReplacement(choices: any[]) {
+  const randIndex = Math.floor(Math.random() * (choices.length - 1));
+
+  // remove the item
+  const item = choices.splice(randIndex, 1);
+  return item[0];
+}
+
+function createBrickFromType(state: State, type: number): Brick {
+  switch (type) {
+    case 1:
+      return new Brick(state, utils.TextureCache.brick1);
+    case 2:
+      return new BrickTier2(state, utils.TextureCache.brick2);
+    default:
+      return new Brick(state, utils.TextureCache.brick1);
+  }
+}
+
+const createBricks = (state: State, ...amounts: number[]) => {
+  const result: Brick[] = [];
+
+  amounts.forEach((num, index) => {
+    for (let i = 0; i < num; i += 1) {
+      result.push(createBrickFromType(state, index + 1));
+    }
+  });
+
+  return result;
+};
+
+export const bricksSetup = (state: State) => {
+  // populate the brick container
   const numberOfRows = 8;
   const bricksPerRow = 16;
   const brickSlotWidth = state.app.renderer.view.width / bricksPerRow;
   const brickSlotHeight = (state.app.renderer.view.height * 0.4) / numberOfRows;
+  const typeRatio = { type1: 0.8, type2: 0.2 };
+  const type1Amount = Math.floor(numberOfRows * bricksPerRow * typeRatio.type1);
+  const type2Amount = Math.ceil(numberOfRows * bricksPerRow * typeRatio.type2);
 
-  const bricksContainer = new Bricks();
+  const bricksContainer = state.renderList.bricks;
+
+  const brickArray = createBricks(state, type1Amount, type2Amount);
 
   for (let i = 0; i < numberOfRows; i += 1) {
     for (let j = 0; j < bricksPerRow; j += 1) {
-      const newBrick = new Brick(state, textures.brick);
+      const newBrick = sampleWithoutReplacement(brickArray);
 
       newBrick.width = brickSlotWidth - 10;
       newBrick.height = brickSlotHeight - 10;
@@ -59,6 +97,4 @@ export const bricksSetup = (state: State, textures: { brick: Texture }) => {
       bricksContainer.addChild(newBrick);
     }
   }
-
-  state.renderList.bricks = bricksContainer;
 };

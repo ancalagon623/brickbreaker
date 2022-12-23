@@ -9,11 +9,10 @@ export default class State {
     app: Application,
     resources: PIXI.utils.Dict<PIXI.LoaderResource>
   ) {
-    // create and position the game sprites
     this.app = app;
     // turn off the game over scene
     this.gameOverRenderList.root.visible = false;
-    // create the sprites
+    // create and position the game sprites
     this.renderList.ball = new Ball(resources.ball.texture);
     this.renderList.paddle = new Paddle(resources.paddle.texture);
     this.gameOverRenderList.gameOverText.anchor.set(0.5);

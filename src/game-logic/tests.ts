@@ -7,6 +7,18 @@ import {
   PaddleSprite,
 } from './types';
 
+export const calculateBallVelocity = (ball: BallSprite, score: number) => {
+  const newCombinedVelocity = ball.vx * ball.vy + 0.05 * score;
+
+  const vectorRatio = ball.vy / ball.vx;
+
+  const newVx = Math.sqrt(newCombinedVelocity / vectorRatio);
+  const newVy = Math.sqrt(newCombinedVelocity * vectorRatio);
+
+  console.log([newVy, newVx]);
+  return [newVy, newVx];
+};
+
 export const borderCollisionTest = (
   sprite: SpriteWithVelocity,
   renderer: PIXI.Renderer | PIXI.AbstractRenderer
@@ -68,8 +80,6 @@ export const ballAndBrickCollisionTest = (
   ball: BallSprite,
   brickGrid: BrickSprite[]
 ) => {
-  // type check
-  if (!brickGrid) return Collisions.None;
   // the ball has collided with a brick when the vertical and horizontal distance from their anchors are both less than the sum of half their respective widths and heights.
   // The simplest way to do this would be to loop through the brickgrid and test the distance from every brickto find any bricks the ball is currently colliding with, and whether the collision is vertical or horizontal.
 

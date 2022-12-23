@@ -1,16 +1,12 @@
 import { AbstractRenderer, Renderer } from 'pixi.js';
-import {
-  SpriteWithVelocity,
-  BallSprite,
-  Collisions,
-  BrickSprite,
-  PaddleSprite,
-} from './types';
+import { SpriteWithVelocity, Collisions, PaddleSprite } from './types';
 import {
   ballAndBrickCollisionTest,
   borderCollisionTest,
   paddleAndBallCollisionTest,
+  calculateBallVelocity,
 } from './tests';
+import State from './models/state';
 
 // define a function that allows us to change the velocity of the sprite.
 export const animateX = (
@@ -49,17 +45,19 @@ export const updatePaddleVelocity = (
   }
 };
 
-export const updateBallVelocity = (
-  paddle: PaddleSprite,
-  ball: BallSprite,
-  brickGrid: BrickSprite[],
-  renderer: Renderer | AbstractRenderer
-) => {
+export const updateBallVelocity = (state: State) => {
   // all checks go here
+
+  const {
+    renderList: { ball, paddle, bricks },
+    app: { renderer },
+    score,
+  } = state;
 
   const { borderCollision } = borderCollisionTest(ball, renderer);
   const { paddleCollision } = paddleAndBallCollisionTest(paddle, ball);
-  const brickCollision = ballAndBrickCollisionTest(ball, brickGrid);
+  const brickCollision = ballAndBrickCollisionTest(ball, bricks.children);
+  const newBallVelocities = calculateBallVelocity(ball, score);
   // same process for changing the paddle velocity, only there are different rules for how the ball reflects off the walls.
   if (borderCollision.left) {
     animateX(ball, ball.vx * -1);

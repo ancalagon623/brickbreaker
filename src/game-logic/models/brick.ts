@@ -19,22 +19,16 @@ export default class Brick extends Sprite {
 
   breakingAnimation = {
     stage: 0,
-    textures: {
-      stage1: Texture.from(`images/brick-stage-1.png`),
-      stage2: Texture.from('images/brick-stage-2.png'),
-    },
+    textures: {},
   };
 
   break() {
     if (this.ballCollision.broken) return;
     this.breakingAnimation.stage += 1;
-    if (this.breakingAnimation.stage === 3) {
+    if (this.breakingAnimation.stage === 1) {
       this.ballCollision.broken = true;
       this.state.increaseScore(1);
       this.visible = false;
-    } else {
-      const { stage, textures } = this.breakingAnimation;
-      this.texture = textures[`stage${stage}` as keyof typeof textures];
     }
   }
 }
