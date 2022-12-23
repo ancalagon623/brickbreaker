@@ -3,6 +3,7 @@ import * as anim from './animations';
 import { paddleSetup, ballSetup, bricksSetup } from './setup';
 import { keyboard } from './event-listeners';
 import State from './models/state';
+import { UpdateFunction } from './types';
 
 export const play = (
   app: PIXI.Application,
@@ -10,46 +11,39 @@ export const play = (
 ) => {
   const state = new State(app, resources);
   const { renderList, gameOverRenderList } = state;
-  const updaters = {
-    stop(delta: number) {
-      renderList.root.visible = false;
-      gameOverRenderList.root.visible = true;
-    },
-    run(delta: number) {
-      // check the paddle's position and update the velocity as necessary.
-      anim.updatePaddleVelocity(renderList.paddle, app.renderer);
-      // check the ball's position and change it if it hits a side or the paddle
-      anim.updateBallVelocity(
-        renderList.paddle,
-        renderList.ball,
-        renderList.bricks.children,
-        app.renderer
-      );
 
-      // animate the ball
-      if (renderList.ball.vx) {
-        renderList.ball.x += delta * renderList.ball.vx;
-      }
-      if (renderList.ball.vy) {
-        renderList.ball.y += delta * renderList.ball.vy;
-      }
-      if (renderList.ball.lost) {
-        renderList.ball.visible = false;
-      }
-      if (renderList.paddle.vx) {
-        // animate the paddle
-        renderList.paddle.x += delta * renderList.paddle.vx;
-      }
+  let updateState: UpdateFunction;
 
-      if (renderList.ball.lost) {
-        updateState = this.stop.bind(this);
-      }
-    },
+  const stop = (delta: number) => {
+    renderList.root.visible = false;
+    gameOverRenderList.gameOverText.text = `Game Over!\nFinal Score: ${state.score}`;
+    gameOverRenderList.root.visible = true;
   };
 
-  let updateState: (delta: number) => void;
+  const run = (delta: number) => {
+    // check the paddle's position and update the velocity as necessary.
+    anim.updatePaddleVelocity(renderList.paddle, app.renderer);
+    // check the ball's position and change it if it hits a side or the paddle
+    anim.updateBallVelocity(state);
 
-  updateState = updaters.run.bind(updaters);
+    // animate the ball
+    if (renderList.ball.vx) {
+      renderList.ball.x += delta * renderList.ball.vx;
+    }
+    if (renderList.ball.vy) {
+      renderList.ball.y += delta * renderList.ball.vy;
+    }
+    if (renderList.ball.lost) {
+      renderList.ball.visible = false;
+      updateState = stop;
+    }
+    if (renderList.paddle.vx) {
+      // animate the paddle
+      renderList.paddle.x += delta * renderList.paddle.vx;
+    }
+  };
+
+  updateState = run;
 
   // Create paddle, ball, and brick sprites and add to the state object.
   if (
@@ -59,7 +53,7 @@ export const play = (
   ) {
     paddleSetup(state);
     ballSetup(state);
-    bricksSetup(state, { brick: resources.brick2.texture });
+    bricksSetup(state);
   }
 
   // initialize the arrow key listeners and add the animation callbacks

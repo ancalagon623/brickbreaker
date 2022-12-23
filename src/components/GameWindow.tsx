@@ -32,6 +32,7 @@ const GameWindow = () => {
       loader.add('ball', 'images/test-ball.png');
       loader.add('brick1', 'images/wood-brick.png');
       loader.add('brick2', 'images/brick-brick.png');
+      loader.add('brick2_stage1', 'images/brick-brick-stage2.png');
       loader.load((ldr, resources) => {
         cleanup = play(app, resources);
       });
