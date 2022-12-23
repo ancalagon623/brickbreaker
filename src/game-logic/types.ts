@@ -1,4 +1,4 @@
-import { Container, Sprite } from 'pixi.js';
+import { Application, Container, Sprite, Text } from 'pixi.js';
 
 export enum Collisions {
   Vertical,
@@ -18,7 +18,8 @@ export interface SpriteWithVelocity extends Sprite {
 }
 
 export interface BallSprite extends SpriteWithVelocity {
-  paddleCollision: string;
+  paddleCollision: Collisions;
+  lost: boolean;
 }
 
 export type PaddleSprite = SpriteWithVelocity;
@@ -29,6 +30,12 @@ export interface BrickSprite extends Sprite {
     type: Collisions;
     broken: boolean;
   };
+
+  breakingAnimation: {
+    stage: number;
+  };
+
+  break: () => void;
 }
 
 export interface BrickContainer extends Container {
@@ -47,18 +54,9 @@ export interface KeyObject {
 }
 
 export interface Config {
-  width: number;
-  height: number;
+  app: Application;
 }
 
-// Game State Object
-export type GameState = {
-  config: Config;
-  renderList: {
-    bricks: BrickContainer;
-    paddle: PaddleSprite;
-    ball: BallSprite;
-  };
-};
+export type UpdateFunction = (delta: number) => void;
 
-export type GameObject = PaddleSprite | BallSprite | BrickContainer;
+export type GameObject = PaddleSprite | BallSprite | BrickContainer | Text;

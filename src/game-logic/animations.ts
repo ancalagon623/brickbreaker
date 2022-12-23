@@ -1,9 +1,8 @@
-import { Container, DisplayObject } from 'pixi.js';
+import { AbstractRenderer, Renderer } from 'pixi.js';
 import {
   SpriteWithVelocity,
   BallSprite,
-  GameState,
-  Config,
+  Collisions,
   BrickSprite,
   PaddleSprite,
 } from './types';
@@ -36,17 +35,16 @@ export const endXAnimation = (sprite: SpriteWithVelocity) => {
   sprite.vx = 0;
 };
 
-export const updatePaddleVelocity = (paddle: PaddleSprite, config: Config) => {
+export const updatePaddleVelocity = (
+  paddle: PaddleSprite,
+  renderer: Renderer | AbstractRenderer
+) => {
   // check whether the paddle is touching a border
 
-  const { borderCollision } = borderCollisionTest(paddle, config);
+  const { borderCollision } = borderCollisionTest(paddle, renderer);
   if (typeof paddle.vx === 'number' && borderCollision?.left && paddle.vx < 0) {
     endXAnimation(paddle);
-  } else if (
-    typeof paddle.vx === 'number' &&
-    borderCollision?.right &&
-    paddle.vx > 0
-  ) {
+  } else if (borderCollision.right && paddle.vx > 0) {
     endXAnimation(paddle);
   }
 };
@@ -55,24 +53,44 @@ export const updateBallVelocity = (
   paddle: PaddleSprite,
   ball: BallSprite,
   brickGrid: BrickSprite[],
-  config: Config
+  renderer: Renderer | AbstractRenderer
 ) => {
   // all checks go here
 
-  const { borderCollision } = borderCollisionTest(ball, config);
+  const { borderCollision } = borderCollisionTest(ball, renderer);
   const { paddleCollision } = paddleAndBallCollisionTest(paddle, ball);
   const brickCollision = ballAndBrickCollisionTest(ball, brickGrid);
   // same process for changing the paddle velocity, only there are different rules for how the ball reflects off the walls.
-  if (borderCollision?.left || borderCollision?.right) {
+  if (borderCollision.left) {
     animateX(ball, ball.vx * -1);
   }
 
-  if (borderCollision?.top || borderCollision?.bottom) {
+  if (borderCollision.right) {
+    animateX(ball, ball.vx * -1);
+  }
+
+  if (borderCollision.top) {
     animateY(ball, ball.vy * -1);
   }
 
-  // animate based on the paddle collision
-  if (paddleCollision === 'top') {
+  if (brickCollision === Collisions.Horizontal) {
+    animateX(ball, ball.vx * -1);
+  }
+
+  if (brickCollision === Collisions.Vertical) {
     animateY(ball, ball.vy * -1);
+  }
+
+  if (paddleCollision === Collisions.Vertical) {
+    animateY(ball, ball.vy * -1);
+  }
+
+  if (paddleCollision === Collisions.Horizontal) {
+    animateX(ball, ball.vx * -1);
+  }
+
+  if (ball.y >= ball.height / 2 + renderer.view.height) {
+    // ball has past the bottom threshold
+    ball.lost = true;
   }
 };
