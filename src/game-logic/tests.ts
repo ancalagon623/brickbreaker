@@ -7,18 +7,6 @@ import {
   PaddleSprite,
 } from './types';
 
-export const calculateBallVelocity = (ball: BallSprite, score: number) => {
-  const newCombinedVelocity = ball.vx * ball.vy + 0.05 * score;
-
-  const vectorRatio = ball.vy / ball.vx;
-
-  const newVx = Math.sqrt(newCombinedVelocity / vectorRatio);
-  const newVy = Math.sqrt(newCombinedVelocity * vectorRatio);
-
-  console.log([newVy, newVx]);
-  return [newVy, newVx];
-};
-
 export const borderCollisionTest = (
   sprite: SpriteWithVelocity,
   renderer: PIXI.Renderer | PIXI.AbstractRenderer
@@ -56,8 +44,6 @@ export const paddleAndBallCollisionTest = (
   paddle: PaddleSprite,
   ball: BallSprite
 ): BallSprite => {
-  // reset old test
-  ball.paddleCollision = Collisions.None;
   const paddleHalfHeight = paddle.height * 0.5;
   const paddleHalfWidth = paddle.width * 0.5;
   const ballHalfHeight = ball.height * 0.5;
@@ -70,8 +56,13 @@ export const paddleAndBallCollisionTest = (
     ball.x <= paddle.x + paddleHalfWidth &&
     ball.vy > 0
   ) {
-    // ball has collided with the top of the paddle
-    ball.paddleCollision = Collisions.Vertical;
+    // ball is inside the paddle's space
+    if (ball.paddleCollision === Collisions.None) {
+      ball.paddleCollision = Collisions.Vertical;
+    }
+  } else if (ball.paddleCollision === Collisions.Vertical) {
+    // ball is no longer inside the paddle's space, so reset the old test
+    ball.paddleCollision = Collisions.None;
   }
   return ball;
 };

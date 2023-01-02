@@ -17,12 +17,14 @@ export interface SpriteWithVelocity extends Sprite {
   };
 }
 
+export type PaddleSprite = SpriteWithVelocity;
+
 export interface BallSprite extends SpriteWithVelocity {
   paddleCollision: Collisions;
+  increaseVelocityByScore: (score: number) => void;
+  collideWithPaddle: (paddle: PaddleSprite) => void;
   lost: boolean;
 }
-
-export type PaddleSprite = SpriteWithVelocity;
 
 export interface BrickSprite extends Sprite {
   ballCollision: {

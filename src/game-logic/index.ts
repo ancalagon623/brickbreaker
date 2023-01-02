@@ -16,7 +16,9 @@ export const play = (
 
   const stop = (delta: number) => {
     renderList.root.visible = false;
-    gameOverRenderList.gameOverText.text = `Game Over!\nFinal Score: ${state.score}`;
+    gameOverRenderList.gameOverText.text = `Game Over\nFinal Score: ${
+      state.score
+    }${state.gameStatus === 'won' ? '\nYou win!' : ''}`;
     gameOverRenderList.root.visible = true;
   };
 
@@ -33,13 +35,15 @@ export const play = (
     if (renderList.ball.vy) {
       renderList.ball.y += delta * renderList.ball.vy;
     }
-    if (renderList.ball.lost) {
-      renderList.ball.visible = false;
-      updateState = stop;
-    }
     if (renderList.paddle.vx) {
       // animate the paddle
       renderList.paddle.x += delta * renderList.paddle.vx;
+    }
+
+    state.updateGameStatus();
+
+    if (state.gameStatus !== 'playing') {
+      updateState = stop;
     }
   };
 
@@ -63,7 +67,7 @@ export const play = (
     anim.animateX(renderList.paddle, -5);
   };
   leftKeySettings.release = () => {
-    if (renderList.paddle?.vx && renderList.paddle.vx < 0) {
+    if (renderList.paddle.vx && renderList.paddle.vx < 0) {
       anim.endXAnimation(renderList.paddle);
     }
   };
@@ -71,7 +75,7 @@ export const play = (
     anim.animateX(renderList.paddle, 5);
   };
   rightKeySettings.release = () => {
-    if (renderList.paddle?.vx && renderList.paddle.vx > 0) {
+    if (renderList.paddle.vx && renderList.paddle.vx > 0) {
       anim.endXAnimation(renderList.paddle);
     }
   };
@@ -91,5 +95,6 @@ export const play = (
       leftKeySettings.unsubscribe();
       rightKeySettings.unsubscribe();
     }
+    app.destroy(true, true);
   };
 };

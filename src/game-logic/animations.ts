@@ -4,7 +4,6 @@ import {
   ballAndBrickCollisionTest,
   borderCollisionTest,
   paddleAndBallCollisionTest,
-  calculateBallVelocity,
 } from './tests';
 import State from './models/state';
 
@@ -38,7 +37,7 @@ export const updatePaddleVelocity = (
   // check whether the paddle is touching a border
 
   const { borderCollision } = borderCollisionTest(paddle, renderer);
-  if (typeof paddle.vx === 'number' && borderCollision?.left && paddle.vx < 0) {
+  if (borderCollision.left && paddle.vx < 0) {
     endXAnimation(paddle);
   } else if (borderCollision.right && paddle.vx > 0) {
     endXAnimation(paddle);
@@ -51,13 +50,11 @@ export const updateBallVelocity = (state: State) => {
   const {
     renderList: { ball, paddle, bricks },
     app: { renderer },
-    score,
   } = state;
 
   const { borderCollision } = borderCollisionTest(ball, renderer);
   const { paddleCollision } = paddleAndBallCollisionTest(paddle, ball);
   const brickCollision = ballAndBrickCollisionTest(ball, bricks.children);
-  const newBallVelocities = calculateBallVelocity(ball, score);
   // same process for changing the paddle velocity, only there are different rules for how the ball reflects off the walls.
   if (borderCollision.left) {
     animateX(ball, ball.vx * -1);
@@ -80,11 +77,7 @@ export const updateBallVelocity = (state: State) => {
   }
 
   if (paddleCollision === Collisions.Vertical) {
-    animateY(ball, ball.vy * -1);
-  }
-
-  if (paddleCollision === Collisions.Horizontal) {
-    animateX(ball, ball.vx * -1);
+    ball.collideWithPaddle(paddle);
   }
 
   if (ball.y >= ball.height / 2 + renderer.view.height) {
