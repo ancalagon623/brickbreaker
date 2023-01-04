@@ -56,13 +56,18 @@ export const paddleAndBallCollisionTest = (
     ball.x <= paddle.x + paddleHalfWidth &&
     ball.vy > 0
   ) {
-    // ball is inside the paddle's space
+    // ball is inside the paddle's space. If it's the first time this has happened, then turn a collision has happened
     if (ball.paddleCollision === Collisions.None) {
       ball.paddleCollision = Collisions.Vertical;
+      // debugger;
+    } else {
+      ball.paddleCollision = Collisions.Ongoing;
+      // debugger;
     }
-  } else if (ball.paddleCollision === Collisions.Vertical) {
+  } else if (ball.paddleCollision !== Collisions.None) {
     // ball is no longer inside the paddle's space, so reset the old test
     ball.paddleCollision = Collisions.None;
+    // debugger;
   }
   return ball;
 };

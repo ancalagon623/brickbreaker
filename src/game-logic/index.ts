@@ -64,7 +64,7 @@ export const play = (
   const leftKeySettings = keyboard('ArrowLeft');
   const rightKeySettings = keyboard('ArrowRight');
   leftKeySettings.press = () => {
-    anim.animateX(renderList.paddle, -5);
+    anim.animateX(renderList.paddle, -7);
   };
   leftKeySettings.release = () => {
     if (renderList.paddle.vx && renderList.paddle.vx < 0) {
@@ -72,7 +72,7 @@ export const play = (
     }
   };
   rightKeySettings.press = () => {
-    anim.animateX(renderList.paddle, 5);
+    anim.animateX(renderList.paddle, 7);
   };
   rightKeySettings.release = () => {
     if (renderList.paddle.vx && renderList.paddle.vx > 0) {

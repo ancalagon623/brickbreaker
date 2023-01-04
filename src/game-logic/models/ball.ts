@@ -5,26 +5,47 @@ export default class Ball extends MovingSprite {
   paddleCollision = Collisions.None;
 
   increaseVelocityByScore = (score: number) => {
-    this.vx += 0.05 * score * (this.vx / Math.abs(this.vx));
-    this.vy += 0.05 * score * (this.vy / Math.abs(this.vy));
+    this.vx += 0.05 * score * Math.sign(this.vx);
+    this.vy += 0.05 * score * Math.sign(this.vy);
+  };
+
+  static calculateComponentVelocityByAngle = (
+    angle: number,
+    angleDirection: number,
+    resultantVelocity: number
+  ) => {
+    const xComponent = Math.cos(angle) * resultantVelocity;
+    const yComponent = Math.sin(angle) * resultantVelocity;
+
+    return [xComponent * angleDirection, yComponent * -1];
+  };
+
+  calculateReflectionAngle = (paddle: PaddleSprite) => {
+    const paddleHalfWidth = paddle.width / 2;
+    const distanceOfBallFromPaddleCenter = this.x - paddle.x;
+    const distanceFromNearestEdge =
+      paddleHalfWidth - Math.abs(distanceOfBallFromPaddleCenter);
+    const angleFactor = distanceFromNearestEdge / paddleHalfWidth;
+    const angleDirection = Math.sign(distanceOfBallFromPaddleCenter);
+
+    // 1. Calculate the angle of reflection
+    let angle = angleFactor * (Math.PI / 2);
+    if (angle < 0.15) angle = 0.15;
+
+    return [angle, angleDirection];
   };
 
   collideWithPaddle = (paddle: PaddleSprite) => {
-    const vector = this.vx * this.vy;
-    if (paddle.vx * this.vx > 0) {
-      // both objects moving in the same direction relative to the x axis
-      this.vx -= paddle.vx;
-      this.vy = vector / this.vx;
-      // this.vy = this.vy * -1 + paddle.vx;
-    }
-    if (paddle.vx * this.vx < 0) {
-      // objects moving in defferent directions along the x axis
-      this.vx += paddle.vx;
-      this.vy = vector / this.vx;
-    }
-    if (paddle.vx === 0) {
-      this.vy = this.vy > 0 ? this.vy * -1 : this.vy;
-    }
+    const resultantVelocity = Math.hypot(this.vx, this.vy);
+    const [angle, angleDirection] = this.calculateReflectionAngle(paddle);
+
+    const [vx, vy] = Ball.calculateComponentVelocityByAngle(
+      angle,
+      angleDirection,
+      resultantVelocity
+    );
+    this.vx = vx;
+    this.vy = vy;
   };
 
   lost = false;

@@ -57,6 +57,7 @@ export const updateBallVelocity = (state: State) => {
   const brickCollision = ballAndBrickCollisionTest(ball, bricks.children);
   // same process for changing the paddle velocity, only there are different rules for how the ball reflects off the walls.
   if (borderCollision.left) {
+    ball.x += ball.width;
     animateX(ball, ball.vx * -1);
   }
 
@@ -76,7 +77,10 @@ export const updateBallVelocity = (state: State) => {
     animateY(ball, ball.vy * -1);
   }
 
-  if (paddleCollision === Collisions.Vertical) {
+  if (
+    paddleCollision === Collisions.Vertical ||
+    paddleCollision === Collisions.Horizontal
+  ) {
     ball.collideWithPaddle(paddle);
   }
 

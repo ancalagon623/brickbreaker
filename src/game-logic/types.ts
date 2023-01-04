@@ -3,6 +3,7 @@ import { Application, Container, Sprite, Text } from 'pixi.js';
 export enum Collisions {
   Vertical,
   Horizontal,
+  Ongoing,
   None,
 }
 
