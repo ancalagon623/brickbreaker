@@ -36,21 +36,29 @@ export default class State {
 
   score = 0;
 
-  #game = 'playing';
+  private game = 'playing';
+
+  togglePause = () => {
+    if (this.app.ticker.started) {
+      this.app.ticker.stop();
+    } else {
+      this.app.ticker.start();
+    }
+  };
 
   get gameStatus() {
-    return this.#game;
+    return this.game;
   }
 
   updateGameStatus() {
     if (this.renderList.ball.lost) {
-      this.#game = 'lost';
+      this.game = 'lost';
     }
     if (!this.renderList.ball.lost) {
       if (this.renderList.bricks.children.every((b) => b.visible === false)) {
-        this.#game = 'won';
+        this.game = 'won';
       } else {
-        this.#game = 'playing';
+        this.game = 'playing';
       }
     }
   }

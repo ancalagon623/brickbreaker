@@ -1,15 +1,20 @@
-import React from 'react';
+import styled from 'styled-components';
 import './index.css';
 import Header from './components/Header';
 import Content from './components/Content';
 
 function App() {
   return (
-    <div className="App">
+    <AppContainer className="App">
       <Header />
       <Content />
-    </div>
+    </AppContainer>
   );
 }
+
+const AppContainer = styled.div`
+  height: 100vh;
+  width: 100vw;
+`;
 
 export default App;

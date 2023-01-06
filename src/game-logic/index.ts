@@ -90,11 +90,14 @@ export const play = (
   app.stage.addChild(state.renderList.root);
 
   // return a cleanup function
-  return () => {
-    if (leftKeySettings.unsubscribe && rightKeySettings.unsubscribe) {
-      leftKeySettings.unsubscribe();
-      rightKeySettings.unsubscribe();
-    }
-    app.destroy(true, true);
+  return {
+    cleanup: () => {
+      if (leftKeySettings.unsubscribe && rightKeySettings.unsubscribe) {
+        leftKeySettings.unsubscribe();
+        rightKeySettings.unsubscribe();
+      }
+      app.destroy(true, true);
+    },
+    state,
   };
 };

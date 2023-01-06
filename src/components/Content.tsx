@@ -6,21 +6,26 @@ const rules = ['rule 1', 'rule 2', 'rule 3'];
 
 const Content: React.FC = () => (
   <Main>
-    {/* <GameRules>
-      {rules.map((rule, i) => (
-        <p key={i}>{rule}</p>
-      ))}
-    </GameRules> */}
-    <GameWindow />
+    <GameContainer>
+      <GameWindow />
+    </GameContainer>
   </Main>
 );
 
 export default Content;
 
 const Main = styled.div`
-  margin: 0 auto;
   width: 100%;
-  display: flex;
+  height: 100%;
+  position: relative;
+`;
+
+const GameContainer = styled.div`
+  width: fit-content;
+  position: absolute;
+  top: calc(50% - var(--app-height) / 2);
+  left: calc(50% - var(--app-width) / 2);
+  margin: 0;
 `;
 
 const GameRules = styled.section`

@@ -1,0 +1,8 @@
+* {
+  margin: 0;
+}
+
+:root {
+  --app-width: 800px;
+  --app-height: 400px;
+}
