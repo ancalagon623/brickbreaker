@@ -70,8 +70,8 @@ const createBricks = (state: State, ...amounts: number[]) => {
 
 export const bricksSetup = (state: State) => {
   // populate the brick container
-  const numberOfRows = 2;
-  const bricksPerRow = 4;
+  const numberOfRows = 4;
+  const bricksPerRow = 8;
   const brickSlotWidth = state.app.renderer.view.width / bricksPerRow;
   const brickSlotHeight = (state.app.renderer.view.height * 0.4) / numberOfRows;
   const typeRatio = { type1: 0.8, type2: 0.2 };

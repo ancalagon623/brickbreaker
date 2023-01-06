@@ -1,17 +1,58 @@
 import React, { useEffect, useState } from 'react';
 import * as PIXI from 'pixi.js';
 import { Application } from 'pixi.js';
+import State from '../game-logic/models/state';
 import { play } from '../game-logic';
+import { ControlBox } from './GameWindow.styled';
+
+const getCSSVariable = (varname: string) => {
+  const root = document.querySelector(':root');
+
+  if (root) {
+    return getComputedStyle(root).getPropertyValue(varname);
+  }
+  return null;
+};
+
+interface ControlsProps {
+  gameState: State | null;
+}
+
+const Controls = (props: ControlsProps) => {
+  const { gameState } = props;
+  const [paused, setPaused] = useState(false);
+  const handlePause = () => {
+    gameState?.togglePause();
+    setPaused(!gameState?.app.ticker.started);
+  };
+
+  return (
+    <ControlBox>
+      <button type="button" onClick={(e) => handlePause()}>
+        {paused ? 'Play' : 'Pause'}
+      </button>
+      <button type="button">Play Again</button>
+    </ControlBox>
+  );
+};
 
 const GameWindow = () => {
   const [app, init] = useState<Application | null>(null);
+  const [gameState, setGameState] = useState<State | null>(null);
 
   useEffect(() => {
+    const widthString = getCSSVariable('--app-width')?.slice(0, -2);
+    const heightString = getCSSVariable('--app-height')?.slice(0, -2);
     const APP = new PIXI.Application({
-      width: 800,
-      height: 400,
+      width: widthString ? parseInt(widthString) : 800,
+      height: heightString ? parseInt(heightString) : 400,
       backgroundColor: 0x000000,
     });
+
+    PIXI.Ticker.system.autoStart = false;
+    PIXI.Ticker.system.stop();
+    PIXI.Ticker.shared.autoStart = false;
+    PIXI.Ticker.shared.stop();
 
     init(APP);
   }, []);
@@ -34,13 +75,20 @@ const GameWindow = () => {
       loader.add('brick2', 'images/brick-brick.png');
       loader.add('brick2_stage1', 'images/brick-brick-stage2.png');
       loader.load((ldr, resources) => {
-        cleanup = play(app, resources);
+        const gameUtils = play(app, resources);
+        cleanup = gameUtils.cleanup;
+        setGameState(gameUtils.state);
       });
       return cleanup;
     }
   }, [app]);
 
-  return <div id="game-window" />;
+  return (
+    <>
+      <div id="game-window" />
+      <Controls gameState={gameState} />
+    </>
+  );
 };
 
 export default GameWindow;
