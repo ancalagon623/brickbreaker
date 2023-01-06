@@ -5,15 +5,32 @@ import State from '../game-logic/models/state';
 import { play } from '../game-logic';
 import { ControlBox } from './GameWindow.styled';
 
+const getCSSVariable = (varname: string) => {
+  const root = document.querySelector(':root');
+
+  if (root) {
+    return getComputedStyle(root).getPropertyValue(varname);
+  }
+  return null;
+};
+
 interface ControlsProps {
   gameState: State | null;
 }
 
 const Controls = (props: ControlsProps) => {
   const { gameState } = props;
+  const [paused, setPaused] = useState(false);
+  const handlePause = () => {
+    gameState?.togglePause();
+    setPaused(!gameState?.app.ticker.started);
+  };
+
   return (
     <ControlBox>
-      <button type="button">Pause</button>
+      <button type="button" onClick={(e) => handlePause()}>
+        {paused ? 'Play' : 'Pause'}
+      </button>
       <button type="button">Play Again</button>
     </ControlBox>
   );
@@ -22,15 +39,6 @@ const Controls = (props: ControlsProps) => {
 const GameWindow = () => {
   const [app, init] = useState<Application | null>(null);
   const [gameState, setGameState] = useState<State | null>(null);
-
-  const getCSSVariable = (varname: string) => {
-    const root = document.querySelector(':root');
-
-    if (root) {
-      return getComputedStyle(root).getPropertyValue(varname);
-    }
-    return null;
-  };
 
   useEffect(() => {
     const widthString = getCSSVariable('--app-width')?.slice(0, -2);
