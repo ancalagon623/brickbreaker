@@ -1,6 +1,5 @@
-import { Texture, utils } from 'pixi.js';
+import { utils } from 'pixi.js';
 import Brick from './models/brick';
-import Bricks from './models/brick-container';
 import BrickTier2 from './models/brick-tier-2';
 import State from './models/state';
 
@@ -71,8 +70,8 @@ const createBricks = (state: State, ...amounts: number[]) => {
 
 export const bricksSetup = (state: State) => {
   // populate the brick container
-  const numberOfRows = 8;
-  const bricksPerRow = 16;
+  const numberOfRows = 2;
+  const bricksPerRow = 4;
   const brickSlotWidth = state.app.renderer.view.width / bricksPerRow;
   const brickSlotHeight = (state.app.renderer.view.height * 0.4) / numberOfRows;
   const typeRatio = { type1: 0.8, type2: 0.2 };

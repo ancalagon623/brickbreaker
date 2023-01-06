@@ -36,9 +36,29 @@ export default class State {
 
   score = 0;
 
+  #game = 'playing';
+
+  get gameStatus() {
+    return this.#game;
+  }
+
+  updateGameStatus() {
+    if (this.renderList.ball.lost) {
+      this.#game = 'lost';
+    }
+    if (!this.renderList.ball.lost) {
+      if (this.renderList.bricks.children.every((b) => b.visible === false)) {
+        this.#game = 'won';
+      } else {
+        this.#game = 'playing';
+      }
+    }
+  }
+
   increaseScore(num: number) {
     this.score += num;
     // anything that's supposed to happen when the score changes takes place here
+    this.renderList.ball.increaseVelocityByScore(num);
     this.renderList.scoreCounter.text = `Score: ${this.score}`;
   }
 
