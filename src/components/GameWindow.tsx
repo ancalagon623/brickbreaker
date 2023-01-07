@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import * as PIXI from 'pixi.js';
 import { Application } from 'pixi.js';
+import WebFont from 'webfontloader';
 import State from '../game-logic/models/state';
 import { play } from '../game-logic';
-import { ControlBox } from './GameWindow.styled';
+import Controls from './Controls';
 
 const getCSSVariable = (varname: string) => {
   const root = document.querySelector(':root');
@@ -12,37 +13,6 @@ const getCSSVariable = (varname: string) => {
     return getComputedStyle(root).getPropertyValue(varname);
   }
   return null;
-};
-
-interface ControlsProps {
-  gameState: State | null;
-}
-
-const Controls = (props: ControlsProps) => {
-  const { gameState } = props;
-  const [paused, setPaused] = useState(false);
-
-  const handlePause = () => {
-    gameState?.togglePause();
-    setPaused(gameState?.app.ticker.started ? false : true);
-  };
-
-  const handlePlayAgain = () => {
-    gameState?.replay();
-  };
-
-  return (
-    <ControlBox>
-      <button type="button" onClick={(e) => handlePause()}>
-        {!gameState?.app.ticker.started ? 'Play' : 'Pause'}
-      </button>
-      {
-        <button type="button" onClick={(e) => handlePlayAgain()}>
-          Play Again
-        </button>
-      }
-    </ControlBox>
-  );
 };
 
 const GameWindow = () => {
@@ -83,6 +53,9 @@ const GameWindow = () => {
       loader.add('brick1', 'images/wood-brick.png');
       loader.add('brick2', 'images/brick-brick.png');
       loader.add('brick2_stage1', 'images/brick-brick-stage2.png');
+      WebFont.load({
+        google: { families: ['Kanit'] },
+      });
       loader.load((ldr, resources) => {
         const gameUtils = play(app, resources);
         cleanup = gameUtils.cleanup;

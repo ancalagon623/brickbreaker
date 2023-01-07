@@ -1,3 +1,8 @@
+@font-face {
+  font-family: Kanit;
+  src: url('C:/Users/mgrum/code/react-webgame/brickbreaker/public/assets/Kanit-MediumItalic.ttf');
+}
+
 * {
   margin: 0;
 }

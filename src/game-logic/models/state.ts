@@ -17,11 +17,16 @@ export default class State {
     // create and position the game sprites
     this.renderList.ball = new Ball(resources.ball.texture);
     this.renderList.paddle = new Paddle(resources.paddle.texture);
-    this.gameOverRenderList.gameOverText.anchor.set(0.5);
-    this.gameOverRenderList.gameOverText.position.set(
-      app.renderer.view.width / 2,
-      app.renderer.view.height / 2
-    );
+
+    Object.values(this.gameOverRenderList).forEach((displayObj) => {
+      if (displayObj instanceof PIXI.Text) {
+        displayObj.anchor.set(0.5);
+        displayObj.position.set(
+          app.renderer.view.width / 2,
+          app.renderer.view.height / 2
+        );
+      }
+    });
 
     this.renderList.scoreCounter.anchor.set(0.5);
     this.renderList.scoreCounter.position.set(
@@ -31,8 +36,29 @@ export default class State {
     this.renderList.scoreCounter.zIndex = 0;
 
     this.renderList.root.addChild(...Object.values(this.renderList));
-    this.gameOverRenderList.root.addChild(this.gameOverRenderList.gameOverText);
+    this.gameOverRenderList.root.addChild(
+      ...Object.values(this.gameOverRenderList)
+    );
   }
+
+  styles = {
+    gameWonStyle: new PIXI.TextStyle({
+      fontSize: 30,
+      fontFamily: 'Kanit',
+      fill: '#00FFFF',
+    }),
+    gameLostStyle: new PIXI.TextStyle({
+      fontSize: 30,
+      fontFamily: 'Kanit',
+      fontWeight: '600',
+      fill: '#FF0000',
+      stroke: '#FFFFFF',
+    }),
+    inGame: new PIXI.TextStyle({
+      fill: '#005588',
+      fontFamily: 'Kanit',
+    }),
+  };
 
   app: Application;
 
@@ -107,11 +133,14 @@ export default class State {
 
   gameOverRenderList = {
     root: new Container(),
-    gameOverText: new PIXI.Text(`Game Over!\nFinal Score: ${this.score}`, {
-      fill: '#00FFFF',
-      fontSize: 30,
-      fontWeight: '700',
-    }),
+    gameWonText: new PIXI.Text(
+      `You won!\nFinal Score: ${this.score}`,
+      this.styles.gameWonStyle
+    ),
+    gameLostText: new PIXI.Text(
+      `Game Over\nFinal Score: ${this.score}`,
+      this.styles.gameLostStyle
+    ),
   };
 
   renderList = {
@@ -119,6 +148,6 @@ export default class State {
     bricks: new Bricks(),
     ball: new Ball(),
     paddle: new Paddle(),
-    scoreCounter: new PIXI.Text(`Score: ${this.score}`, { fill: '#005588' }),
+    scoreCounter: new PIXI.Text(`Score: ${this.score}`, this.styles.inGame),
   };
 }

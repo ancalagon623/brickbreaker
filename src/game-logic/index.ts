@@ -16,9 +16,15 @@ export const play = (
 
   const stop = (delta: number) => {
     renderList.root.visible = false;
-    gameOverRenderList.gameOverText.text = `Game Over\nFinal Score: ${
-      state.score
-    }${state.gameStatus === 'won' ? '\nYou win!' : ''}`;
+    if (state.gameStatus === 'won') {
+      gameOverRenderList.gameWonText.text = `You won!\nFinal Score: ${state.score}`;
+      gameOverRenderList.gameLostText.visible = false;
+      gameOverRenderList.gameWonText.visible = true;
+    } else {
+      gameOverRenderList.gameLostText.text = `Game Over\nFinal Score: ${state.score}`;
+      gameOverRenderList.gameWonText.visible = false;
+      gameOverRenderList.gameLostText.visible = true;
+    }
     gameOverRenderList.root.visible = true;
     if (state.gameStatus === 'playing') {
       updateState = run;
