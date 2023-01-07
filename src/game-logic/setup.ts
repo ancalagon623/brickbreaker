@@ -1,7 +1,8 @@
 import { utils } from 'pixi.js';
 import Brick from './models/brick';
+import Bricks from './models/brick-container';
 import BrickTier2 from './models/brick-tier-2';
-import State from './models/state';
+import type State from './models/state';
 
 export const paddleSetup = (state: State) => {
   const {
@@ -23,6 +24,8 @@ export const ballSetup = (state: State) => {
     renderList: { ball, paddle },
     app: { renderer },
   } = state;
+
+  ball.lost = false;
 
   // Give the ball a velocity to be used in the game loop.
   ball.vx = 4;
@@ -56,7 +59,7 @@ function createBrickFromType(state: State, type: number): Brick {
   }
 }
 
-const createBricks = (state: State, ...amounts: number[]) => {
+function createBricks(state: State, ...amounts: number[]) {
   const result: Brick[] = [];
 
   amounts.forEach((num, index) => {
@@ -66,7 +69,7 @@ const createBricks = (state: State, ...amounts: number[]) => {
   });
 
   return result;
-};
+}
 
 export const bricksSetup = (state: State) => {
   // populate the brick container
@@ -78,7 +81,10 @@ export const bricksSetup = (state: State) => {
   const type1Amount = Math.floor(numberOfRows * bricksPerRow * typeRatio.type1);
   const type2Amount = Math.ceil(numberOfRows * bricksPerRow * typeRatio.type2);
 
-  const bricksContainer = state.renderList.bricks;
+  if (state.renderList.bricks.children.length) {
+    state.renderList.bricks.children.forEach((b) => b.destroy());
+    state.renderList.bricks.children = [];
+  }
 
   const brickArray = createBricks(state, type1Amount, type2Amount);
 
@@ -93,7 +99,7 @@ export const bricksSetup = (state: State) => {
         brickSlotWidth * j + brickSlotWidth / 2,
         brickSlotHeight * i + brickSlotHeight / 2
       );
-      bricksContainer.addChild(newBrick);
+      state.renderList.bricks.addChild(newBrick);
     }
   }
 };

@@ -7,7 +7,7 @@ export default class BrickTier2 extends Brick {
     this.breakingAnimation.stage += 1;
     if (this.breakingAnimation.stage === 2) {
       this.ballCollision.broken = true;
-      this.state.increaseScore(1);
+      this.state.increaseScore(2);
       this.visible = false;
     } else {
       const { stage, textures } = this.breakingAnimation;

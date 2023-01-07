@@ -1,8 +1,10 @@
 import { Application, Container } from 'pixi.js';
 import * as PIXI from 'pixi.js';
+// import { Listeners } from '../types';
 import Bricks from './brick-container';
 import Ball from './ball';
 import Paddle from './paddle';
+import * as su from '../setup';
 
 export default class State {
   constructor(
@@ -50,6 +52,31 @@ export default class State {
     return this.game;
   }
 
+  // listeners: Listeners = {};
+
+  // reportStateChange() {
+  //   for (const property in this.listeners) {
+  //     if (this.listeners.isOwnProperty(property)) {
+  //       this.listeners[property](this);
+  //     }
+  //   }
+  // }
+
+  replay() {
+    this.setScore(0);
+    this.game = 'playing';
+
+    su.ballSetup(this);
+    su.bricksSetup(this);
+    su.paddleSetup(this);
+
+    // this.reportStateChange();
+
+    if (!this.app.ticker.started) {
+      this.app.ticker.start();
+    }
+  }
+
   updateGameStatus() {
     if (this.renderList.ball.lost) {
       this.game = 'lost';
@@ -70,6 +97,14 @@ export default class State {
     this.renderList.scoreCounter.text = `Score: ${this.score}`;
   }
 
+  setScore(num: number) {
+    if (num < 0) {
+      return;
+    }
+    this.score = num;
+    this.renderList.scoreCounter.text = `Score: ${this.score}`;
+  }
+
   gameOverRenderList = {
     root: new Container(),
     gameOverText: new PIXI.Text(`Game Over!\nFinal Score: ${this.score}`, {
@@ -84,6 +119,6 @@ export default class State {
     bricks: new Bricks(),
     ball: new Ball(),
     paddle: new Paddle(),
-    scoreCounter: new PIXI.Text('Score: 0', { fill: '#005588' }),
+    scoreCounter: new PIXI.Text(`Score: ${this.score}`, { fill: '#005588' }),
   };
 }

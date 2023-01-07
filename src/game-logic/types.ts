@@ -63,3 +63,5 @@ export interface Config {
 export type UpdateFunction = (delta: number) => void;
 
 export type GameObject = PaddleSprite | BallSprite | BrickContainer | Text;
+
+// export interface Listeners {}

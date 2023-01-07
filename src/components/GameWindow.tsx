@@ -21,17 +21,26 @@ interface ControlsProps {
 const Controls = (props: ControlsProps) => {
   const { gameState } = props;
   const [paused, setPaused] = useState(false);
+
   const handlePause = () => {
     gameState?.togglePause();
-    setPaused(!gameState?.app.ticker.started);
+    setPaused(gameState?.app.ticker.started ? false : true);
+  };
+
+  const handlePlayAgain = () => {
+    gameState?.replay();
   };
 
   return (
     <ControlBox>
       <button type="button" onClick={(e) => handlePause()}>
-        {paused ? 'Play' : 'Pause'}
+        {!gameState?.app.ticker.started ? 'Play' : 'Pause'}
       </button>
-      <button type="button">Play Again</button>
+      {
+        <button type="button" onClick={(e) => handlePlayAgain()}>
+          Play Again
+        </button>
+      }
     </ControlBox>
   );
 };

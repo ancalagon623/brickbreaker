@@ -5,8 +5,8 @@ export default class Ball extends MovingSprite {
   paddleCollision = Collisions.None;
 
   increaseVelocityByScore = (score: number) => {
-    this.vx += 0.05 * score * Math.sign(this.vx);
-    this.vy += 0.05 * score * Math.sign(this.vy);
+    this.vx += 0.03 * score * Math.sign(this.vx);
+    this.vy += 0.03 * score * Math.sign(this.vy);
   };
 
   static calculateComponentVelocityByAngle = (

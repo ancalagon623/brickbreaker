@@ -1,6 +1,6 @@
 import { Sprite, Texture } from 'pixi.js';
 import { Collisions } from '../types';
-import State from './state';
+import type State from './state';
 
 export default class Brick extends Sprite {
   constructor(state: State, texture: Texture) {
